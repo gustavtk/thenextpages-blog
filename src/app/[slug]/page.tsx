@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ShareButton from '@/components/ShareButton';
-import { ArticleInlineAd, BannerAd } from '@/components/AdSense';
 import Link from 'next/link';
 import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/lib/wordpress';
 
@@ -115,8 +114,7 @@ async function ArticleContent({ article }: { article: Article }) {
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
 
-            {/* Ad placement after article content */}
-            <ArticleInlineAd className="my-12" />
+
 
             {/* Posted In Section */}
             <div className="mt-12 lg:mt-16 pt-6 lg:pt-8 border-t border-gray-100">
@@ -131,8 +129,7 @@ async function ArticleContent({ article }: { article: Article }) {
               </div>
             </div>
 
-            {/* Banner Ad before related articles */}
-            <BannerAd className="my-8" />
+
 
             {/* Keep Reading Section */}
             {relatedArticles.length > 0 && (

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function HeroSection() {
   const [currentDate, setCurrentDate] = useState('');
@@ -55,12 +56,12 @@ export default function HeroSection() {
             >
               Explore Articles
             </a>
-            <a
+            <Link
               href="/feed"
               className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 transition-colors"
             >
               Subscribe to Feed
-            </a>
+            </Link>
           </div>
         </div>
 

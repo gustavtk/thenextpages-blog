@@ -44,12 +44,7 @@ export default function RootLayout({
         <link rel="canonical" href="https://thenextpages.com/" />
         <meta name="theme-color" content="#4285f4" />
         
-        {/* Google AdSense - Replace YOUR_ADSENSE_ID with your actual AdSense ID */}
-        <script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"
-          crossOrigin="anonymous"
-        />
+
       </head>
       <body className={`${inter.variable} font-inter antialiased`} suppressHydrationWarning={true}>
         {children}

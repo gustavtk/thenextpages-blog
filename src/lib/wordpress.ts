@@ -468,7 +468,7 @@ async function fetchMenuItems(menuId: number): Promise<WPMenuItem[]> {
             return data.sort((a, b) => (a.menu_order || 0) - (b.menu_order || 0));
           }
         }
-      } catch (error) {
+      } catch {
         continue;
       }
     }
