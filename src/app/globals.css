@@ -1,26 +1,360 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
+/* Light mode colors (default) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-background: #ffffff;
+  --card-border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-muted: #9ca3af;
+  --link-hover: #2563eb;
+  --button-hover: #f3f4f6;
+  --input-background: #f3f4f6;
+  --input-border: #d1d5db;
+  --divider: #e5e7eb;
+  --surface-hover: #f9fafb;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --focus-ring: #4285f4;
+}
+
+/* Dark mode colors */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #121212;
+    --foreground: #e0e0e0;
+    --card-background: #1e1e1e;
+    --card-border: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b3b3b3;
+    --text-tertiary: #999999;
+    --text-muted: #666666;
+    --link-hover: #4d90fe;
+    --button-hover: #2d2d2d;
+    --input-background: #1e1e1e;
+    --input-border: #3d3d3d;
+    --divider: #2d2d2d;
+    --surface-hover: #2d2d2d;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --focus-ring: #4d90fe;
+  }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Apply Inter font to all elements */
+* {
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Override any potential font conflicts */
+h1, h2, h3, h4, h5, h6,
+p, a, span, div, button, input, textarea, select {
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Dark mode utility classes */
+.bg-primary { background-color: var(--background); }
+.bg-card { background-color: var(--card-background); }
+.bg-hover { background-color: var(--button-hover); }
+.bg-input { background-color: var(--input-background); }
+.bg-surface-hover { background-color: var(--surface-hover); }
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-muted { color: var(--text-muted); }
+
+.border-primary { border-color: var(--card-border); }
+.border-input { border-color: var(--input-border); }
+.border-divider { border-color: var(--divider); }
+
+/* Override Tailwind classes for dark mode compatibility */
+.bg-white { background-color: var(--card-background); }
+.bg-gray-50 { background-color: var(--surface-hover); }
+.bg-gray-100 { background-color: var(--input-background); }
+
+.text-gray-900 { color: var(--text-primary); }
+.text-gray-700 { color: var(--text-secondary); }
+.text-gray-600 { color: var(--text-tertiary); }
+.text-gray-400 { color: var(--text-muted); }
+.text-gray-300 { color: var(--text-muted); }
+
+.border-gray-200 { border-color: var(--card-border); }
+.border-gray-300 { border-color: var(--input-border); }
+.border-gray-100 { border-color: var(--divider); }
+
+.hover\:bg-gray-50:hover { background-color: var(--surface-hover); }
+.hover\:bg-gray-100:hover { background-color: var(--button-hover); }
+.hover\:bg-gray-200:hover { background-color: var(--button-hover); }
+
+.hover\:text-gray-900:hover { color: var(--text-primary); }
+.hover\:text-blue-600:hover { color: var(--link-hover); }
+
+/* Shadow adjustments for dark mode */
+.shadow-md { box-shadow: 0 4px 6px -1px var(--shadow), 0 2px 4px -1px var(--shadow); }
+.shadow-lg { box-shadow: 0 10px 15px -3px var(--shadow), 0 4px 6px -2px var(--shadow); }
+.shadow-xl { box-shadow: 0 20px 25px -5px var(--shadow), 0 10px 10px -5px var(--shadow); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px var(--shadow); }
+
+/* Custom utilities for line clamping */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Remove blue focus outlines and rings for search inputs specifically */
+input[type="text"]:focus,
+input[type="search"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+}
+
+/* Ensure search inputs don't get default browser focus styling */
+.search-input:focus,
+.search-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  ring: none !important;
+}
+
+/* Article Typography - matching Google Blog exactly */
+.article-body {
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 400;
+}
+
+.article-headline-1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 400;
+}
+
+.article-headline-2 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+.article-meta {
+  font-size: 14px;
+  line-height: 48px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+@media (min-width: 1024px) {
+  .article-headline-1 {
+    font-size: 36px;
+    line-height: 44px;
+  }
+  
+  .article-headline-2 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+}
+
+/* White overlay adjustments for dark mode */
+@media (prefers-color-scheme: dark) {
+  .bg-white\/20 {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Custom Article Content Styling */
+.article-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content h2 {
+  font-size: 1.875rem;
+  line-height: 1.167;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.025em;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content h3 {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content h4 {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.025em;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content h5 {
+  font-size: 1.125rem;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content h6 {
+  font-size: 1rem;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content p {
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content strong {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content em {
+  font-style: italic;
+  color: var(--text-secondary);
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content a:hover {
+  text-decoration: underline;
+}
+
+.article-content img {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px var(--shadow), 0 4px 6px -2px var(--shadow);
+  margin: 2rem 0;
+  width: 100%;
+  height: auto;
+}
+
+.article-content blockquote {
+  border-left: 4px solid #2563eb;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  background-color: var(--surface-hover);
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-style: italic;
+  color: var(--text-tertiary);
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content ul, .article-content ol {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.article-content li {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.article-content ul {
+  list-style-type: disc;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+}
+
+.article-content code {
+  background-color: var(--input-background);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  color: var(--text-primary);
+}
+
+.article-content pre {
+  background-color: #1f2937;
+  color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.article-content pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
 }

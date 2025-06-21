@@ -1,103 +1,52 @@
-import Image from "next/image";
+import FeaturedArticle from '@/components/FeaturedArticle';
+import ArticleGrid from '@/components/ArticleGrid';
+import AllTheLatest from '@/components/AllTheLatest';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { 
+  fetchFeaturedPosts, 
+  fetchRandomPosts, 
+  fetchPosts, 
+  transformWPPostToArticle 
+} from '@/lib/wordpress';
 
-export default function Home() {
+
+
+// Add ISR (Incremental Static Regeneration) - revalidate every 5 minutes
+export const revalidate = 300;
+
+export default async function Home() {
+  // Fetch data in parallel for better performance
+  const [featuredPosts, randomPosts, latestPosts] = await Promise.all([
+    fetchFeaturedPosts(1), // Get 1 featured post
+    fetchRandomPosts(3, ['featured']), // Get 3 random posts excluding featured
+    fetchPosts({ 
+      per_page: 50, // Safe limit within WordPress API constraints (max 100)
+      _embed: true,
+      orderby: 'date',
+      order: 'desc'
+    })
+  ]);
+
+  // Transform WordPress posts to match our Article interface
+  const [featuredArticles, randomArticles, allArticles] = await Promise.all([
+    Promise.all(featuredPosts.map(post => transformWPPostToArticle(post))),
+    Promise.all(randomPosts.map(post => transformWPPostToArticle(post))),
+    Promise.all(latestPosts.map(post => transformWPPostToArticle(post)))
+  ]);
+
+  const featuredArticle = featuredArticles[0] || null;
+  const gridArticles = randomArticles.length >= 3 ? randomArticles : allArticles.slice(0, 3);
+  // Give more articles to "All the Latest" section so Load More button can appear
+  const latestArticles = allArticles.slice(4); // Start from 4th article to leave room for featured/grid
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className="min-h-screen bg-white">
+      <Header />
+      {featuredArticle && <FeaturedArticle article={featuredArticle} />}
+      {gridArticles.length > 0 && <ArticleGrid articles={gridArticles} />}
+      {latestArticles.length > 0 && <AllTheLatest articles={latestArticles} />}
+      <Footer />
     </div>
   );
 }

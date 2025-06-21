@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Google Africa Blog Clone
+
+A pixel-perfect clone of the Google Africa Blog website built with Next.js, TypeScript, and Tailwind CSS.
+
+## Features
+
+- ✅ Responsive design matching Google's breakpoints
+- ✅ Header with Google logo, navigation, and search functionality
+- ✅ Hero section with featured article and colorful geometric background
+- ✅ Article grid layout with thumbnails, titles, dates, and categories
+- ✅ "All the Latest" section with article listings
+- ✅ Footer with social links and Google branding
+- ✅ Semantic HTML5 markup
+- ✅ Accessibility features (WCAG 2.1 compliant)
+- ✅ SEO optimized with meta tags
+- ✅ Mobile-first responsive design
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Font**: Inter (Google Fonts)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd google-africa-blog
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+### Build for Production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+└── components/
+    ├── Header.tsx
+    ├── HeroSection.tsx
+    ├── ArticleGrid.tsx
+    ├── AllTheLatest.tsx
+    └── Footer.tsx
+```
 
-## Deploy on Vercel
+## Components
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Header
+- Google logo and Africa Blog branding
+- Navigation menu with responsive mobile menu
+- Search functionality with input field
+- Language selector and additional menu
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### HeroSection
+- Colorful geometric pattern background
+- Featured article with AI category
+- Author information and call-to-action
+
+### ArticleGrid
+- Three-column responsive grid
+- Article cards with images, categories, and metadata
+- Gradient backgrounds for placeholder images
+
+### AllTheLatest
+- List of latest articles with thumbnails
+- Category badges and publication dates
+- "Load more stories" button
+
+### Footer
+- Social media links
+- Google branding and footer navigation
+- Language and help options
+
+## Responsive Design
+
+The website is fully responsive with breakpoints:
+- Mobile: 320px+
+- Tablet: 768px+
+- Desktop: 1024px+
+- Large screens: 1280px+
+
+## Accessibility
+
+- Semantic HTML structure
+- ARIA labels for interactive elements
+- Keyboard navigation support
+- Focus indicators
+- Alt text for images
+- Screen reader friendly
+
+## Performance
+
+- Optimized for Core Web Vitals
+- Static generation with Next.js
+- Efficient CSS with Tailwind
+- Lazy loading for images
+- Minimal JavaScript bundle
+
+## Legal Notice
+
+This is a clone created for educational purposes only. It replicates the visual design of the Google Africa Blog but:
+- Uses dummy content instead of actual Google content
+- Does not use Google's trademarked assets
+- Is not affiliated with or endorsed by Google
+- Should not be used for commercial purposes
+
+## License
+
+This project is for educational purposes only. Please respect Google's intellectual property and trademarks.
