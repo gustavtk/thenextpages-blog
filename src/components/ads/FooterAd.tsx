@@ -28,12 +28,7 @@ export default function FooterAd() {
       <div className="border-t border-gray-200 pt-8 mt-8">
         <ins
           className="adsbygoogle"
-          style={{
-            display: 'block',
-            width: '100%',
-            maxWidth: '100%',
-            height: 'auto'
-          }}
+          style={{ display: 'block' }}
           data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
           data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_FOOTER_AD}
           data-ad-format="auto"
