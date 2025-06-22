@@ -2,6 +2,12 @@
 
 import Script from 'next/script';
 
+declare global {
+  interface Window {
+    adsbygoogle: unknown[];
+  }
+}
+
 export default function AdSenseLoader() {
   // Don't render if no publisher ID or auto ads disabled
   if (process.env.NEXT_PUBLIC_ADSENSE_AUTO_ADS !== 'true' || !process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID) {
