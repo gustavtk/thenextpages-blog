@@ -5,6 +5,7 @@ import Script from 'next/script';
 declare global {
   interface Window {
     adsbygoogle: unknown[];
+    adsenseInitialized?: boolean;
   }
 }
 
@@ -23,13 +24,18 @@ export default function AdSenseLoader() {
         strategy="afterInteractive"
         onLoad={() => {
           // Simple Auto Ads initialization that works across all devices
-          try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({
-              google_ad_client: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID,
-              enable_page_level_ads: true
-            });
-          } catch (error) {
-            console.error('Auto Ads initialization error:', error);
+          // Prevent duplicate initialization
+          if (typeof window !== 'undefined' && !window.adsenseInitialized) {
+            try {
+              (window.adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID,
+                enable_page_level_ads: true
+              });
+              // Mark as initialized to prevent duplicates
+              window.adsenseInitialized = true;
+            } catch (error) {
+              console.error('Auto Ads initialization error:', error);
+            }
           }
         }}
       />
