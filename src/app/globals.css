@@ -356,42 +356,7 @@ input[type="search"]:focus {
   color: inherit;
 }
 
-/* AdSense Optimization for Performance and Layout Stability */
-
-/* Prevent layout shifts from ads */
-.adsbygoogle {
-  /* Reserve space to prevent CLS (Cumulative Layout Shift) */
-  min-height: 200px;
-  display: block !important;
-  width: 100% !important;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  /* Smooth transitions for loading */
-  transition: all 0.3s ease;
-}
-
-/* Ensure responsive behavior on all devices */
-@media (max-width: 768px) {
-  .adsbygoogle {
-    min-height: 250px;
-    max-height: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .adsbygoogle {
-    min-height: 200px;
-    max-height: 250px;
-  }
-}
-
-/* Optimize loading performance */
-.adsbygoogle {
-  /* Use contain for better performance */
-  contain: layout style paint;
-  /* Optimize rendering */
-  will-change: contents;
-}
+/* AdSense Auto Ads Responsive Configuration */
 
 /* Ensure header stays above any ads */
 header {
@@ -400,19 +365,104 @@ header {
   top: 0 !important;
 }
 
-/* Prevent any auto ads that might still appear (safety measure) */
-ins.adsbygoogle[data-ad-format="autorelaxed"],
-ins.adsbygoogle[data-ad-format="auto"] {
-  display: none !important;
+/* Auto Ads responsive container rules */
+.adsbygoogle {
+  /* Ensure proper responsive behavior */
+  max-width: 100% !important;
+  height: auto !important;
+  /* Smooth transitions for loading */
+  transition: all 0.3s ease;
+  /* Optimize rendering performance */
+  contain: layout style paint;
+  will-change: contents;
 }
 
-/* Only allow our controlled ad formats */
+/* Responsive Auto Ads sizing for mobile */
+@media (max-width: 768px) {
+  .adsbygoogle {
+    /* Ensure ads don't exceed mobile viewport */
+    max-width: 100vw !important;
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    /* Adaptive height for mobile */
+    max-height: 300px !important;
+  }
+  
+  /* Auto Ads in article content - mobile optimization */
+  .article-content .adsbygoogle {
+    margin: 1.5rem 0 !important;
+    padding: 0 1rem !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .adsbygoogle {
+    max-height: 250px !important;
+    /* Smaller margins on very small screens */
+    margin: 1rem 0 !important;
+  }
+}
+
+/* Auto Ads positioning and layout fixes */
+.adsbygoogle {
+  /* Prevent ads from breaking container bounds */
+  box-sizing: border-box !important;
+  /* Ensure proper text flow around ads */
+  clear: both;
+  /* Consistent spacing */
+  margin: 1rem auto !important;
+}
+
+/* Auto Ads in main content areas */
+main .adsbygoogle,
+article .adsbygoogle,
+.article-content .adsbygoogle {
+  /* Center ads in content */
+  display: block !important;
+  text-align: center;
+  /* Responsive width with max constraints */
+  width: 100% !important;
+  max-width: 100% !important;
+  /* Prevent layout shifts */
+  min-height: 1px;
+}
+
+/* Auto Ads anchor/overlay optimization */
+.adsbygoogle[data-anchor-status] {
+  /* Ensure anchor ads don't interfere with navigation */
+  z-index: 1000 !important;
+}
+
+/* Prevent header interference from Auto Ads */
+body > .adsbygoogle:first-of-type {
+  margin-top: 80px !important;
+}
+
+/* Auto Ads loading optimization */
+.adsbygoogle:empty {
+  /* Minimal placeholder while loading */
+  min-height: 50px;
+  background-color: transparent;
+}
+
+/* Auto Ads responsive typography integration */
+.adsbygoogle {
+  /* Inherit site fonts for any ad text */
+  font-family: var(--font-dm-sans), "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+/* Manual ads styling (keep existing controlled ads) */
 ins.adsbygoogle[data-ad-format="rectangle"] {
+  /* Manual ads with controlled sizing */
+  min-height: 200px;
+  background-color: #f9fafb;
+  border-radius: 8px;
   display: block !important;
 }
 
-/* Loading state styling */
-.adsbygoogle:empty {
+/* Loading state for manual ads */
+ins.adsbygoogle[data-ad-format="rectangle"]:empty {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
@@ -421,4 +471,25 @@ ins.adsbygoogle[data-ad-format="rectangle"] {
 @keyframes loading {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* Container query support for modern browsers */
+@supports (container-type: inline-size) {
+  .article-content {
+    container-type: inline-size;
+  }
+  
+  @container (max-width: 600px) {
+    .adsbygoogle {
+      max-height: 250px !important;
+      margin: 1rem 0 !important;
+    }
+  }
+  
+  @container (min-width: 601px) {
+    .adsbygoogle {
+      max-height: 300px !important;
+      margin: 1.5rem 0 !important;
+    }
+  }
 }

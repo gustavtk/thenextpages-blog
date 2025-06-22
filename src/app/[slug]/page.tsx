@@ -112,15 +112,28 @@ async function ArticleContent({ article }: { article: Article }) {
             )}
             
             {/* Render HTML content from WordPress with middle ad component */}
-            <div className="article-content max-w-none">
+            <div 
+              className="article-content max-w-none" 
+              data-ad-layout="in-article" 
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            >
               {/* Content before middle ad */}
-              <div dangerouslySetInnerHTML={{ __html: beforeAd }} />
+              <div 
+                data-ad-layout-key="-fb+5w+4e-db+86" 
+                dangerouslySetInnerHTML={{ __html: beforeAd }} 
+              />
               
-              {/* Middle Ad Component */}
+              {/* Middle Ad Component - Manual placement */}
               {shouldShowMiddleAd && <MiddleAd />}
               
               {/* Content after middle ad */}
-              {afterAd && <div dangerouslySetInnerHTML={{ __html: afterAd }} />}
+              {afterAd && (
+                <div 
+                  data-ad-layout-key="-fb+5w+4e-db+87" 
+                  dangerouslySetInnerHTML={{ __html: afterAd }} 
+                />
+              )}
             </div>
 
 

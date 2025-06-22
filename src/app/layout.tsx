@@ -53,7 +53,10 @@ export default function RootLayout({
         {/* AdSense Auto Ads Script */}
         <AdSenseLoader />
         
-        {children}
+        {/* Auto Ads optimization wrapper */}
+        <div data-ad-layout="in-article" data-ad-format="auto" data-full-width-responsive="true">
+          {children}
+        </div>
       </body>
     </html>
   );
