@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 
 interface FeaturedArticleData {
@@ -9,6 +10,7 @@ interface FeaturedArticleData {
   title: string;
   excerpt: string;
   category: string;
+  categorySlug: string;
   author: string;
   readTime: string;
   date: string;
@@ -22,15 +24,20 @@ interface FeaturedArticleProps {
 export default function FeaturedArticle({ article }: FeaturedArticleProps) {
   return (
     <section className="bg-white w-full" id="featured">
-      <div className="relative w-full h-[450px] lg:h-[500px]">
-        <Link href={`/${article.slug}`} className="group block h-full">
-          {/* Full-width image background - 70% width */}
-          <div className="absolute left-0 top-0 w-full lg:w-[70%] h-full overflow-hidden rounded-2xl border-4 border-white shadow-lg">
+      {/* Mobile: Stacked layout, Desktop: Overlapping layout */}
+      <div className="lg:relative w-full lg:h-[500px]">
+        <Link href={`/${article.slug}`} className="group block">
+          
+          {/* Mobile: Full width image, Desktop: 70% width positioned */}
+          <div className="w-full h-64 lg:absolute lg:left-0 lg:top-0 lg:w-[70%] lg:h-full overflow-hidden rounded-2xl border-4 border-white shadow-lg">
             {article.image ? (
-              <img 
+              <Image 
                 src={article.image}
                 alt={article.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 70vw"
+                priority
               />
             ) : (
               /* Fallback gradient if no image */
@@ -44,8 +51,8 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
             )}
           </div>
 
-          {/* Overlapping white content card - positioned to overlap */}
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-full lg:w-[45%] mx-4 lg:mx-8">
+          {/* Mobile: Below image, Desktop: Overlapping content card */}
+          <div className="w-full p-4 lg:absolute lg:right-0 lg:top-1/2 lg:transform lg:-translate-y-1/2 lg:w-[45%] lg:mx-8 lg:p-0">
             <div className="bg-white rounded-xl shadow-xl p-8 group-hover:shadow-2xl transition-shadow duration-300">
               {/* Category Badge */}
               <div className="mb-6">
@@ -55,7 +62,7 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
               </div>
 
               {/* Article Title */}
-              <h1 className="article-headline-1 text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-normal text-gray-900 mb-4 group-hover:text-blue-600 transition-colors leading-tight">
                 {article.title}
               </h1>
 

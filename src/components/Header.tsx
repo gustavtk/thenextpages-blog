@@ -109,7 +109,7 @@ export default function Header() {
               {/* Search Toggle */}
               <button 
                 onClick={() => setIsSearchVisible(true)}
-                className="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+                className="p-3 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />
@@ -126,7 +126,7 @@ export default function Header() {
               {/* Mobile Search Toggle */}
               <button 
                 onClick={() => setIsSearchVisible(true)}
-                className="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+                className="p-3 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />
@@ -134,7 +134,7 @@ export default function Header() {
               
               {/* Mobile Menu Button */}
               <button 
-                className={`p-2 rounded-full transition-colors ${isMenuOpen ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
+                className={`p-3 rounded-full transition-colors ${isMenuOpen ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 <Menu className="h-5 w-5" />
@@ -151,7 +151,7 @@ export default function Header() {
                 <Link 
                   key={item.name}
                   href={item.href}
-                  className="text-gray-600 hover:text-gray-900 font-normal text-sm py-3 px-3 rounded transition-colors hover:bg-gray-50"
+                  className="text-gray-600 hover:text-gray-900 font-normal text-sm py-4 px-4 rounded transition-colors hover:bg-gray-50"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -181,7 +181,7 @@ export default function Header() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Find an article..."
-                  className="search-input flex-1 bg-transparent outline-none ring-0 focus:ring-0 border-0 text-sm text-gray-900 placeholder-gray-500"
+                  className="search-input flex-1 bg-transparent outline-none ring-0 focus:ring-0 border-0 text-base text-gray-900 placeholder-gray-500"
                   autoComplete="off"
                   autoFocus
                 />

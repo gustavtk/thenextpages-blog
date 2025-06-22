@@ -1,20 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-
-interface Article {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  date: string;
-  author: string;
-  readTime: string;
-  image?: string;
-}
+import { Article } from '@/types/article';
 
 interface AllTheLatestProps {
   articles: Article[];
@@ -36,19 +26,49 @@ export default function AllTheLatest({ articles }: AllTheLatestProps) {
 
   const hasMoreArticles = visibleArticles < articles.length;
 
-  // Format date to match Google's style (MMM DD)
+  // Format date to short uppercase style (MMM DD)
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    }).replace(',', '').toUpperCase();
+    // If the date is already formatted (e.g., "January 16"), convert to short format
+    if (!dateString.includes('T') && !dateString.includes('-') && dateString.includes(' ')) {
+      // Already formatted date like "January 16" - convert to "JAN 16"
+      try {
+        const parts = dateString.split(' ');
+        if (parts.length === 2) {
+          const monthName = parts[0];
+          const day = parts[1];
+          const monthMap: { [key: string]: string } = {
+            'January': 'JAN', 'February': 'FEB', 'March': 'MAR', 'April': 'APR',
+            'May': 'MAY', 'June': 'JUN', 'July': 'JUL', 'August': 'AUG',
+            'September': 'SEP', 'October': 'OCT', 'November': 'NOV', 'December': 'DEC'
+          };
+          return `${monthMap[monthName] || monthName.slice(0, 3).toUpperCase()} ${day}`;
+        }
+      } catch (error) {
+        console.warn('Date formatting error:', error);
+      }
+    }
+    
+    // Try to parse as raw date
+    try {
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric'
+        }).replace(',', '').toUpperCase();
+      }
+    } catch (error) {
+      console.warn('Date parsing error:', error);
+    }
+    
+    // Fallback
+    return dateString.toUpperCase();
   };
 
   return (
     <section className="bg-gray-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-normal text-gray-900 mb-12">All the Latest</h2>
+        <h2 className="text-2xl md:text-3xl font-normal text-gray-900 mb-8 md:mb-12">All the Latest</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.slice(0, visibleArticles).map((article) => (
@@ -66,7 +86,7 @@ export default function AllTheLatest({ articles }: AllTheLatestProps) {
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-start gap-4">
+                  <div className="flex justify-between items-center gap-4">
                     {/* Article Content */}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-normal text-gray-900 group-hover:text-blue-600 transition-colors leading-tight line-clamp-3">
@@ -76,12 +96,14 @@ export default function AllTheLatest({ articles }: AllTheLatestProps) {
 
                     {/* Article Image */}
                     <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden">
+                      <div className="w-32 h-20 rounded-lg overflow-hidden relative">
                         {article.image ? (
-                          <img 
+                          <Image 
                             src={article.image}
                             alt={article.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="128px"
                           />
                         ) : (
                           /* Fallback with gradient */
@@ -106,7 +128,7 @@ export default function AllTheLatest({ articles }: AllTheLatestProps) {
             <button 
               onClick={handleLoadMore}
               disabled={isLoading}
-              className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
             >
               {isLoading ? (
                 <>

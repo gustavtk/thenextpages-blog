@@ -7,20 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { searchPosts, transformWPPostToArticle, getCategoryColor } from '@/lib/wordpress';
 import { Search } from 'lucide-react';
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  date: string;
-  author: string;
-  readTime: string;
-  image?: string;
-  slug: string;
-  tags: number[];
-}
+import { Article } from '@/types/article';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -187,6 +174,9 @@ function SearchContent() {
     </div>
   );
 }
+
+// Disable static generation for search page since it's dynamic
+export const dynamic = 'force-dynamic';
 
 export default function SearchPage() {
   return (

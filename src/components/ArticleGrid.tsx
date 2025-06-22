@@ -1,18 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-
-interface Article {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  date: string;
-  author: string;
-  readTime: string;
-  image?: string;
-}
+import Image from 'next/image';
+import { Article } from '@/types/article';
 
 interface ArticleGridProps {
   articles: Article[];
@@ -22,17 +12,19 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
   return (
     <section className="bg-white py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {articles.map((article) => (
             <Link key={article.id} href={`/${article.slug}`} className="group block">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
                 {/* Article Image */}
-                <div className="aspect-[16/9]">
+                <div className="aspect-[16/9] relative">
                   {article.image ? (
-                    <img 
+                    <Image 
                       src={article.image}
                       alt={article.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">

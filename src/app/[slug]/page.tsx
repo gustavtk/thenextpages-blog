@@ -4,26 +4,14 @@ import Footer from '@/components/Footer';
 import ShareButton from '@/components/ShareButton';
 import Link from 'next/link';
 import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/lib/wordpress';
+import { Article } from '@/types/article';
+import Image from 'next/image';
 
 // Add ISR - revalidate every 10 minutes
 export const revalidate = 600;
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
-}
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  date: string;
-  author: string;
-  readTime: string;
-  image?: string;
-  slug: string;
-  tags: number[];
 }
 
 async function ArticleContent({ article }: { article: Article }) {
@@ -64,7 +52,7 @@ async function ArticleContent({ article }: { article: Article }) {
             </li>
             <li>
               <Link 
-                href={`/category/${article.category.toLowerCase()}`}
+                href={`/category/${article.categorySlug}`}
                 className="text-blue-600 font-medium uppercase tracking-wide hover:text-blue-700"
               >
                 {article.category}
@@ -99,11 +87,14 @@ async function ArticleContent({ article }: { article: Article }) {
           <div className="max-w-none mt-12 lg:mt-16">
             {/* Hero Image */}
             {article.image && (
-              <div className="mb-8 lg:mb-12">
-                <img 
+              <div className="mb-8 lg:mb-12 relative w-full aspect-[16/9]">
+                <Image 
                   src={article.image} 
                   alt={article.title}
-                  className="w-full h-auto rounded-xl"
+                  fill
+                  className="object-cover rounded-xl"
+                  sizes="100vw"
+                  priority
                 />
               </div>
             )}
@@ -121,7 +112,7 @@ async function ArticleContent({ article }: { article: Article }) {
               <h3 className="text-base lg:text-lg font-medium text-gray-900 mb-3 lg:mb-4">Posted in</h3>
               <div className="flex flex-wrap gap-2">
                 <Link 
-                  href={`/category/${article.category.toLowerCase()}`}
+                  href={`/category/${article.categorySlug}`}
                   className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
                 >
                   {article.category}
@@ -170,11 +161,13 @@ async function ArticleContent({ article }: { article: Article }) {
                             {/* Article Image */}
                             {relatedArticle.image && (
                               <div className="flex-shrink-0">
-                                <div className="w-20 h-20 rounded-xl overflow-hidden">
-                                  <img 
+                                <div className="w-20 h-20 rounded-xl overflow-hidden relative">
+                                  <Image 
                                     src={relatedArticle.image} 
                                     alt={relatedArticle.title}
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    className="object-cover"
+                                    sizes="80px"
                                   />
                                 </div>
                               </div>

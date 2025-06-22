@@ -174,11 +174,19 @@ export async function fetchPosts(params?: {
   if (!response.ok) {
     // Try to get more details about the error
     let errorDetails = '';
+    let errorData = null;
     try {
       const errorBody = await response.text();
       errorDetails = ` - ${errorBody}`;
+      errorData = JSON.parse(errorBody);
     } catch {
       errorDetails = '';
+    }
+    
+    // Handle specific case where page number is too high (no more pages available)
+    if (response.status === 400 && errorData?.code === 'rest_post_invalid_page_number') {
+      console.warn('Requested page number exceeds available pages, returning empty array');
+      return []; // Return empty array instead of throwing error
     }
     
     console.error(`WordPress API Error: ${response.status} ${response.statusText}${errorDetails}`);
@@ -306,39 +314,33 @@ export async function fetchMenus(): Promise<WPMenu[]> {
       `https://www.thenextpages.com/wp-json/custom/v1/menus`,
     ];
     
-    console.log('🔍 Searching for WordPress menu endpoints...');
+    const DEBUG = process.env.NODE_ENV === 'development';
+    if (DEBUG) console.log('🔍 Searching for WordPress menu endpoints...');
     
     for (const endpoint of endpoints) {
       try {
-        console.log(`⚡ Trying endpoint: ${endpoint}`);
+        if (DEBUG) console.log(`⚡ Trying endpoint: ${endpoint}`);
         const response = await fetch(endpoint);
-        
-        console.log(`📡 Response status for ${endpoint}:`, response.status, response.statusText);
         
         if (response.ok) {
           const data = await response.json();
-          console.log('✅ Successfully fetched menu data from', endpoint);
-          console.log('📋 Menu data structure:', data);
+          if (DEBUG) console.log('✅ Successfully fetched menu data from', endpoint);
           
           if (Array.isArray(data) && data.length > 0) {
-            console.log('🎯 Found menus:', data.map(menu => menu.name || menu.slug || menu.id));
+            if (DEBUG) console.log('🎯 Found menus:', data.map(menu => menu.name || menu.slug || menu.id));
             return data;
           } else if (data && typeof data === 'object') {
-            // Handle single menu or different structure
-            console.log('📦 Converting single menu or object to array');
+            if (DEBUG) console.log('📦 Converting single menu or object to array');
             return [data];
           }
-        } else {
-          console.log(`❌ Failed to fetch from ${endpoint}: ${response.status} ${response.statusText}`);
         }
       } catch (error) {
-        console.log(`💥 Error fetching from ${endpoint}:`, error);
+        if (DEBUG) console.log(`💥 Error fetching from ${endpoint}:`, error);
         continue;
       }
     }
     
-    // Fallback: return empty array
-    console.log('⚠️ No menu endpoints available, falling back to categories');
+    if (DEBUG) console.log('⚠️ No menu endpoints available, falling back to categories');
     return [];
   } catch (error) {
     console.error('❌ Error fetching menus:', error);
@@ -349,11 +351,12 @@ export async function fetchMenus(): Promise<WPMenu[]> {
 // Fetch Primary Menu specifically
 export async function fetchPrimaryMenu(): Promise<WPMenuItem[]> {
   try {
-    console.log('🔍 Attempting to fetch Primary Menu...');
+    const DEBUG = process.env.NODE_ENV === 'development';
+    if (DEBUG) console.log('🔍 Attempting to fetch Primary Menu...');
     
     // First try to get the menu structure
     const menus = await fetchMenus();
-    console.log('📋 Available menus:', menus);
+    if (DEBUG) console.log('📋 Available menus:', menus);
     
     if (menus.length > 0) {
       // Look for primary menu by name, slug, or location
@@ -375,22 +378,22 @@ export async function fetchPrimaryMenu(): Promise<WPMenuItem[]> {
       
       // If still not found, use the first menu
       if (!primaryMenu && menus.length > 0) {
-        console.log('🎯 Using first available menu as fallback');
+        if (DEBUG) console.log('🎯 Using first available menu as fallback');
         primaryMenu = menus[0];
       }
       
-      console.log('🎯 Selected menu:', primaryMenu);
+      if (DEBUG) console.log('🎯 Selected menu:', primaryMenu);
       
       if (primaryMenu) {
         // If the menu has items, return them
         if (primaryMenu.items && Array.isArray(primaryMenu.items)) {
-          console.log('✅ Found menu items:', primaryMenu.items.length);
+          if (DEBUG) console.log('✅ Found menu items:', primaryMenu.items.length);
           return primaryMenu.items.sort((a, b) => (a.menu_order || 0) - (b.menu_order || 0));
         }
         
         // Try to fetch menu items separately using the menu ID
         if (primaryMenu.id) {
-          console.log('🔄 Fetching menu items separately for menu ID:', primaryMenu.id);
+          if (DEBUG) console.log('🔄 Fetching menu items separately for menu ID:', primaryMenu.id);
           const menuItems = await fetchMenuItems(primaryMenu.id);
           if (menuItems.length > 0) {
             return menuItems;
@@ -400,7 +403,7 @@ export async function fetchPrimaryMenu(): Promise<WPMenuItem[]> {
     }
     
     // Try alternative endpoints for primary menu
-    console.log('🔄 Trying alternative menu endpoints...');
+    if (DEBUG) console.log('🔄 Trying alternative menu endpoints...');
     const alternativeEndpoints = [
       `https://www.thenextpages.com/wp-json/wp/v2/menu-items?menus=primary`,
       `https://www.thenextpages.com/wp-json/wp/v2/menu-items`,
@@ -412,12 +415,12 @@ export async function fetchPrimaryMenu(): Promise<WPMenuItem[]> {
     
     for (const endpoint of alternativeEndpoints) {
       try {
-        console.log(`⚡ Trying alternative endpoint: ${endpoint}`);
+        if (DEBUG) console.log(`⚡ Trying alternative endpoint: ${endpoint}`);
         const response = await fetch(endpoint);
         
         if (response.ok) {
           const data = await response.json();
-          console.log('✅ Alternative endpoint success:', data);
+          if (DEBUG) console.log('✅ Alternative endpoint success:', data);
           
           if (Array.isArray(data) && data.length > 0) {
             // Transform data to our format if needed
@@ -437,12 +440,12 @@ export async function fetchPrimaryMenu(): Promise<WPMenuItem[]> {
           }
         }
       } catch (error) {
-        console.log(`💥 Alternative endpoint error:`, error);
+        if (DEBUG) console.log(`💥 Alternative endpoint error:`, error);
         continue;
       }
     }
     
-    console.log('⚠️ No Primary Menu found, falling back to categories');
+    if (DEBUG) console.log('⚠️ No Primary Menu found, falling back to categories');
     return [];
   } catch (error) {
     console.error('❌ Error fetching primary menu:', error);
@@ -608,7 +611,6 @@ export function extractExcerpt(html: string, wordLimit: number = 30): string {
 export function formatWPDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
-    year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
@@ -644,6 +646,7 @@ export async function transformWPPostToArticle(wpPost: WPPostWithEmbedded): Prom
   excerpt: string;
   content: string;
   category: string;
+  categorySlug: string;
   date: string;
   author: string;
   readTime: string;
@@ -651,15 +654,20 @@ export async function transformWPPostToArticle(wpPost: WPPostWithEmbedded): Prom
   slug: string;
   tags: number[];
 }> {
-  // Get category name
+  // Get category name and slug
   let categoryName = 'UNCATEGORIZED';
+  let categorySlug = 'uncategorized';
   if (wpPost._embedded?.['wp:term']?.[0]?.[0]) {
     categoryName = wpPost._embedded['wp:term'][0][0].name.toUpperCase();
+    categorySlug = wpPost._embedded['wp:term'][0][0].slug;
   } else if (wpPost.categories.length > 0) {
     const category = await fetchCategories().then(cats => 
       cats.find(cat => cat.id === wpPost.categories[0])
     );
-    if (category) categoryName = category.name.toUpperCase();
+    if (category) {
+      categoryName = category.name.toUpperCase();
+      categorySlug = category.slug;
+    }
   }
 
   // Get author name
@@ -688,6 +696,7 @@ export async function transformWPPostToArticle(wpPost: WPPostWithEmbedded): Prom
       extractExcerpt(wpPost.content.rendered),
     content: wpPost.content.rendered,
     category: categoryName,
+    categorySlug: categorySlug,
     date: formatWPDate(wpPost.date),
     author: authorName,
     readTime: `${readTime} min read`,

@@ -5,20 +5,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { fetchPosts, transformWPPostToArticle, getCategoryColor } from '@/lib/wordpress';
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  date: string;
-  author: string;
-  readTime: string;
-  image?: string;
-  slug: string;
-  tags: number[];
-}
+import { Article } from '@/types/article';
+import Image from 'next/image';
 
 export default function FeedPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -103,11 +91,13 @@ export default function FeedPage() {
                     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
                       {/* Article Image */}
                       {article.image ? (
-                        <div className="aspect-w-16 aspect-h-9">
-                          <img 
+                        <div className="relative w-full h-48">
+                          <Image 
                             src={article.image} 
                             alt={article.title}
-                            className="w-full h-48 object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         </div>
                       ) : (
