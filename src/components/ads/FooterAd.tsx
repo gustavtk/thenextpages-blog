@@ -24,24 +24,21 @@ export default function FooterAd() {
   }
 
   return (
-    <div className="w-full my-8 flex justify-center">
-      <div className="max-w-4xl w-full">
-        {/* Footer Ad - After Main Content */}
-        <div className="border-t border-gray-200 pt-8 mt-8">
-          <div className="w-full">
-            <ins
-              className="adsbygoogle"
-              style={{
-                display: 'block',
-                width: '100%'
-              }}
-              data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
-              data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_FOOTER_AD}
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </div>
-        </div>
+    <div className="w-full my-8">
+      <div className="border-t border-gray-200 pt-8 mt-8">
+        <ins
+          className="adsbygoogle"
+          style={{
+            display: 'block',
+            width: '100%',
+            maxWidth: '100%',
+            height: 'auto'
+          }}
+          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
+          data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_FOOTER_AD}
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
       </div>
     </div>
   );

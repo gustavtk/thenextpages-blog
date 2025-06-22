@@ -45,27 +45,24 @@ export default function HeaderAd() {
   }
 
   return (
-    <div ref={adRef} className="w-full my-6 flex justify-center">
-      <div className="max-w-4xl w-full">
-        {/* Header Ad - After Article Title */}
-        <div className="w-full my-6">
-          {isVisible ? (
-            <ins
-              className="adsbygoogle"
-              style={{
-                display: 'block',
-                width: '100%'
-              }}
-              data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
-              data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          ) : (
-            <div style={{ height: '1px' }} />
-          )}
-        </div>
-      </div>
+    <div ref={adRef} className="w-full my-6">
+      {isVisible ? (
+        <ins
+          className="adsbygoogle"
+          style={{
+            display: 'block',
+            width: '100%',
+            maxWidth: '100%',
+            height: 'auto'
+          }}
+          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
+          data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      ) : (
+        <div style={{ height: '1px', width: '100%' }} />
+      )}
     </div>
   );
 }
