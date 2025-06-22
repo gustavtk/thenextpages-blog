@@ -382,6 +382,10 @@ article header,
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
+  
+  /* Ensure ads create proper layout flow */
+  contain: layout;
+  isolation: isolate;
 }
 
 /* Prevent header interference from Auto Ads */
@@ -400,10 +404,68 @@ body {
   overflow-x: hidden;
 }
 
-/* Ad container responsive behavior */
+/* Ad container responsive behavior - let ads dictate space */
 .w-full.my-6,
 .w-full.my-8 {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  /* Give ads breathing room */
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+/* Mobile layout adaptation for ads */
+@media (max-width: 768px) {
+  /* Ensure content doesn't overlap with responsive ads */
+  .max-w-7xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Article content mobile spacing */
+  .article-content {
+    padding: 0 0.5rem;
+  }
+  
+  /* Mobile ad containers - ensure proper spacing */
+  .w-full.my-6 {
+    margin: 1.5rem auto;
+    padding: 0 0.5rem;
+    min-height: fit-content;
+  }
+  
+  .w-full.my-8 {
+    margin: 2rem auto;
+    padding: 0 0.5rem;
+    min-height: fit-content;
+  }
+  
+  /* Prevent content from wrapping around ads */
+  .article-content p,
+  .article-content h1,
+  .article-content h2,
+  .article-content h3,
+  .article-content h4,
+  .article-content h5,
+  .article-content h6 {
+    clear: both;
+    width: 100%;
+  }
+}
+
+/* Ultra-mobile adaptation */
+@media (max-width: 480px) {
+  /* Extra spacing on very small screens */
+  .w-full.my-6,
+  .w-full.my-8 {
+    margin: 1rem auto;
+    padding: 0 0.25rem;
+  }
+  
+  /* Ensure article content has proper margins around ads */
+  .article-content {
+    padding: 0 0.25rem;
+  }
 }
