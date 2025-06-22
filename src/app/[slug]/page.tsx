@@ -4,7 +4,6 @@ import Footer from '@/components/Footer';
 import ShareButton from '@/components/ShareButton';
 import HeaderAd from '@/components/ads/HeaderAd';
 import FooterAd from '@/components/ads/FooterAd';
-import AdSenseScript from '@/components/ads/AdSenseScript';
 import Link from 'next/link';
 import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/lib/wordpress';
 import { injectMiddleAd, shouldInjectMiddleAd } from '@/lib/contentParser';
@@ -197,9 +196,6 @@ async function ArticleContent({ article }: { article: Article }) {
       </main>
 
       <Footer />
-      
-      {/* Initialize AdSense for injected ads */}
-      <AdSenseScript />
     </div>
   );
 }

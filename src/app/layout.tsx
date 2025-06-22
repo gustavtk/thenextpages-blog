@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
-import Debug from "@/components/Debug";
 import AdSenseLoader from "@/components/AdSenseLoader";
 import "./globals.css";
 
@@ -53,9 +52,6 @@ export default function RootLayout({
       <body className={`${dmSans.variable} font-sans antialiased`} suppressHydrationWarning={true} style={{minHeight: '100vh'}}>
         {/* AdSense Auto Ads Script */}
         <AdSenseLoader />
-        
-        {/* Debug component to check env vars */}
-        <Debug />
         
         {children}
       </body>
