@@ -356,12 +356,41 @@ input[type="search"]:focus {
   color: inherit;
 }
 
-/* AdSense Auto Ads Control - Prevent Header Interference */
-/* Prevent Auto Ads from appearing in header area or overlapping navigation */
-header + ins.adsbygoogle,
-header ins.adsbygoogle,
-body > ins.adsbygoogle:first-of-type {
-  display: none !important;
+/* AdSense Optimization for Performance and Layout Stability */
+
+/* Prevent layout shifts from ads */
+.adsbygoogle {
+  /* Reserve space to prevent CLS (Cumulative Layout Shift) */
+  min-height: 200px;
+  display: block !important;
+  width: 100% !important;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  /* Smooth transitions for loading */
+  transition: all 0.3s ease;
+}
+
+/* Ensure responsive behavior on all devices */
+@media (max-width: 768px) {
+  .adsbygoogle {
+    min-height: 250px;
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adsbygoogle {
+    min-height: 200px;
+    max-height: 250px;
+  }
+}
+
+/* Optimize loading performance */
+.adsbygoogle {
+  /* Use contain for better performance */
+  contain: layout style paint;
+  /* Optimize rendering */
+  will-change: contents;
 }
 
 /* Ensure header stays above any ads */
@@ -371,28 +400,25 @@ header {
   top: 0 !important;
 }
 
-/* Prevent ads from being positioned absolute at very top of page */
-ins.adsbygoogle[style*="position: absolute"][style*="top: 0"],
-ins.adsbygoogle[style*="position: fixed"][style*="top: 0"] {
+/* Prevent any auto ads that might still appear (safety measure) */
+ins.adsbygoogle[data-ad-format="autorelaxed"],
+ins.adsbygoogle[data-ad-format="auto"] {
   display: none !important;
 }
 
-/* Hide any ads that appear within first 80px of page top */
-ins.adsbygoogle[style*="top: 0"],
-ins.adsbygoogle[style*="top: 1"],
-ins.adsbygoogle[style*="top: 2"],
-ins.adsbygoogle[style*="top: 3"],
-ins.adsbygoogle[style*="top: 4"],
-ins.adsbygoogle[style*="top: 5"] {
-  display: none !important;
+/* Only allow our controlled ad formats */
+ins.adsbygoogle[data-ad-format="rectangle"] {
+  display: block !important;
 }
 
-/* Prevent overlay ads at top of page */
-.adsbygoogle[data-ad-format="autorelaxed"] {
-  margin-top: 80px !important;
+/* Loading state styling */
+.adsbygoogle:empty {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
 }
 
-/* Additional protection for auto ads that might interfere with navigation */
-body > div:first-child ins.adsbygoogle {
-  margin-top: 80px !important;
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

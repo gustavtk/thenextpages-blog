@@ -34,11 +34,12 @@ export default function MiddleAd() {
             style={{
               display: 'block',
               width: '100%',
-              height: '300px'
+              minHeight: '250px',
+              maxHeight: '320px'
             }}
             data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
             data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_MIDDLE_AD}
-            data-ad-format="auto"
+            data-ad-format="rectangle"
             data-full-width-responsive="true"
           />
         </div>

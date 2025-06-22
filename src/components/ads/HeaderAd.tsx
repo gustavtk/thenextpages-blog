@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -9,14 +9,35 @@ declare global {
 }
 
 export default function HeaderAd() {
+  const adRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
-    try {
-      // Push ad to AdSense queue
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error('HeaderAd AdSense error:', err);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true);
+            // Small delay to ensure smooth loading
+            setTimeout(() => {
+              try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+              } catch (err) {
+                console.error('HeaderAd AdSense error:', err);
+              }
+            }, 100);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    if (adRef.current) {
+      observer.observe(adRef.current);
     }
-  }, []);
+
+    return () => observer.disconnect();
+  }, [isVisible]);
 
   // Don't render if no publisher ID or header ad slot
   if (!process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || !process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD) {
@@ -24,21 +45,41 @@ export default function HeaderAd() {
   }
 
   return (
-    <div className="w-full my-6 flex justify-center">
+    <div ref={adRef} className="w-full my-6 flex justify-center">
       <div className="max-w-4xl w-full">
         {/* Header Ad - After Article Title */}
-        <ins
-          className="adsbygoogle"
-          style={{
-            display: 'block',
-            width: '100%',
-            height: '280px'
-          }}
-          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
-          data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <div className="text-xs text-gray-500 text-center mb-2">Advertisement</div>
+          {isVisible ? (
+            <ins
+              className="adsbygoogle"
+              style={{
+                display: 'block',
+                width: '100%',
+                minHeight: '200px',
+                maxHeight: '300px'
+              }}
+              data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
+              data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
+              data-ad-format="rectangle"
+              data-full-width-responsive="true"
+            />
+          ) : (
+            <div 
+              style={{ 
+                height: '250px', 
+                backgroundColor: '#f3f4f6',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#9ca3af'
+              }}
+            >
+              Loading ad...
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
