@@ -6,7 +6,8 @@ import HeaderAd from '@/components/ads/HeaderAd';
 import FooterAd from '@/components/ads/FooterAd';
 import Link from 'next/link';
 import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/lib/wordpress';
-import { injectMiddleAd, shouldInjectMiddleAd } from '@/lib/contentParser';
+import { splitContentForMiddleAd, shouldInjectMiddleAd } from '@/lib/contentParser';
+import MiddleAd from '@/components/ads/MiddleAd';
 import { Article } from '@/types/article';
 import Image from 'next/image';
 
@@ -32,10 +33,11 @@ async function ArticleContent({ article }: { article: Article }) {
     console.error('Error fetching related articles:', error);
   }
 
-  // Process article content with middle ad injection
-  const processedContent = shouldInjectMiddleAd(article.content) 
-    ? injectMiddleAd(article.content)
-    : article.content;
+  // Split content for middle ad injection
+  const shouldShowMiddleAd = shouldInjectMiddleAd(article.content);
+  const { beforeAd, afterAd } = shouldShowMiddleAd 
+    ? splitContentForMiddleAd(article.content)
+    : { beforeAd: article.content, afterAd: '' };
 
   return (
     <div className="min-h-screen bg-white">
@@ -109,11 +111,17 @@ async function ArticleContent({ article }: { article: Article }) {
               </div>
             )}
             
-            {/* Render HTML content from WordPress with injected middle ad */}
-            <div 
-              className="article-content max-w-none"
-              dangerouslySetInnerHTML={{ __html: processedContent }}
-            />
+            {/* Render HTML content from WordPress with middle ad component */}
+            <div className="article-content max-w-none">
+              {/* Content before middle ad */}
+              <div dangerouslySetInnerHTML={{ __html: beforeAd }} />
+              
+              {/* Middle Ad Component */}
+              {shouldShowMiddleAd && <MiddleAd />}
+              
+              {/* Content after middle ad */}
+              {afterAd && <div dangerouslySetInnerHTML={{ __html: afterAd }} />}
+            </div>
 
 
 

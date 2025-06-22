@@ -1,51 +1,26 @@
 
 /**
- * Injects a middle ad into article content at the optimal position
+ * Splits content into parts for middle ad injection
  * @param htmlContent - The original HTML content from WordPress
- * @returns Modified HTML with middle ad injected
+ * @returns Object with beforeAd and afterAd content
  */
-export function injectMiddleAd(htmlContent: string): string {
-  // Don't inject if no content or ad configuration
-  if (!htmlContent || !process.env.NEXT_PUBLIC_ADSENSE_MIDDLE_AD) {
-    return htmlContent;
-  }
-
+export function splitContentForMiddleAd(htmlContent: string): { beforeAd: string; afterAd: string } {
   // Parse the HTML content
   const paragraphs = htmlContent.split('</p>');
   
-  // Only inject if we have enough paragraphs (at least 4)
+  // Only split if we have enough paragraphs (at least 4)
   if (paragraphs.length < 4) {
-    return htmlContent;
+    return { beforeAd: htmlContent, afterAd: '' };
   }
 
   // Find the optimal insertion point (roughly middle of content)
   const insertionPoint = Math.floor(paragraphs.length / 2);
   
-  // Create the middle ad HTML
-  const middleAdHtml = `
-    <div class="middle-ad-container" style="width: 100%; margin: 2rem 0; display: flex; justify-content: center;">
-      <div style="max-width: 100%; width: 100%;">
-        <div style="background-color: #f9fafb; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.75rem; color: #6b7280; text-align: center; margin-bottom: 0.5rem;">Advertisement</div>
-          <ins class="adsbygoogle"
-               style="display: block; width: 100%; height: 300px;"
-               data-ad-client="${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}"
-               data-ad-slot="${process.env.NEXT_PUBLIC_ADSENSE_MIDDLE_AD}"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Insert the ad after the calculated paragraph
-  paragraphs.splice(insertionPoint, 0, middleAdHtml);
+  // Split content at insertion point
+  const beforeAd = paragraphs.slice(0, insertionPoint).join('</p>') + (paragraphs.slice(0, insertionPoint).length > 0 ? '</p>' : '');
+  const afterAd = paragraphs.slice(insertionPoint).join('</p>');
   
-  // Rejoin the content
-  return paragraphs.join('</p>');
+  return { beforeAd, afterAd };
 }
 
 /**
