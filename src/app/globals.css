@@ -355,3 +355,44 @@ input[type="search"]:focus {
   padding: 0;
   color: inherit;
 }
+
+/* AdSense Auto Ads Control - Prevent Header Interference */
+/* Prevent Auto Ads from appearing in header area or overlapping navigation */
+header + ins.adsbygoogle,
+header ins.adsbygoogle,
+body > ins.adsbygoogle:first-of-type {
+  display: none !important;
+}
+
+/* Ensure header stays above any ads */
+header {
+  z-index: 9999 !important;
+  position: sticky !important;
+  top: 0 !important;
+}
+
+/* Prevent ads from being positioned absolute at very top of page */
+ins.adsbygoogle[style*="position: absolute"][style*="top: 0"],
+ins.adsbygoogle[style*="position: fixed"][style*="top: 0"] {
+  display: none !important;
+}
+
+/* Hide any ads that appear within first 80px of page top */
+ins.adsbygoogle[style*="top: 0"],
+ins.adsbygoogle[style*="top: 1"],
+ins.adsbygoogle[style*="top: 2"],
+ins.adsbygoogle[style*="top: 3"],
+ins.adsbygoogle[style*="top: 4"],
+ins.adsbygoogle[style*="top: 5"] {
+  display: none !important;
+}
+
+/* Prevent overlay ads at top of page */
+.adsbygoogle[data-ad-format="autorelaxed"] {
+  margin-top: 80px !important;
+}
+
+/* Additional protection for auto ads that might interfere with navigation */
+body > div:first-child ins.adsbygoogle {
+  margin-top: 80px !important;
+}
