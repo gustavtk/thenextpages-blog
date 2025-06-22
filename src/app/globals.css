@@ -372,73 +372,19 @@ article header,
   position: static !important;
 }
 
-/* Auto Ads responsive container rules */
+/* Minimal AdSense styling - let Google handle all responsiveness */
 .adsbygoogle {
-  /* Ensure proper responsive behavior */
-  max-width: 100% !important;
-  height: auto !important;
-  /* Smooth transitions for loading */
-  transition: all 0.3s ease;
-  /* Optimize rendering performance */
-  contain: layout style paint;
-  will-change: contents;
-}
-
-/* Responsive Auto Ads sizing for mobile */
-@media (max-width: 768px) {
-  .adsbygoogle {
-    /* Ensure ads don't exceed mobile viewport */
-    max-width: 100vw !important;
-    /* Prevent horizontal scrolling */
-    overflow-x: hidden;
-    /* Adaptive height for mobile */
-    max-height: 300px !important;
-  }
-  
-  /* Auto Ads in article content - mobile optimization */
-  .article-content .adsbygoogle {
-    margin: 1.5rem 0 !important;
-    padding: 0 1rem !important;
-    box-sizing: border-box !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .adsbygoogle {
-    max-height: 250px !important;
-    /* Smaller margins on very small screens */
-    margin: 1rem 0 !important;
-  }
-}
-
-/* Auto Ads positioning and layout fixes */
-.adsbygoogle {
-  /* Prevent ads from breaking container bounds */
-  box-sizing: border-box !important;
-  /* Ensure proper text flow around ads */
-  clear: both;
-  /* Consistent spacing */
-  margin: 1rem auto !important;
-}
-
-/* Auto Ads in main content areas */
-main .adsbygoogle,
-article .adsbygoogle,
-.article-content .adsbygoogle {
-  /* Center ads in content */
+  /* Let Google AdSense handle all sizing and responsiveness */
   display: block !important;
-  text-align: center;
-  /* Responsive width with max constraints */
   width: 100% !important;
-  max-width: 100% !important;
-  /* Prevent layout shifts */
-  min-height: 1px;
-}
-
-/* Auto Ads anchor/overlay optimization */
-.adsbygoogle[data-anchor-status] {
-  /* Ensure anchor ads don't interfere with navigation */
-  z-index: 1000 !important;
+  /* Remove any custom constraints */
+  max-width: none !important;
+  height: auto !important;
+  /* Ensure no background interference */
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Prevent header interference from Auto Ads */
@@ -446,77 +392,8 @@ body > .adsbygoogle:first-of-type {
   margin-top: 80px !important;
 }
 
-/* Auto Ads loading optimization */
-.adsbygoogle:empty {
-  /* Minimal placeholder while loading */
-  min-height: 50px;
-  background-color: transparent;
-}
-
-/* Auto Ads responsive typography integration */
-.adsbygoogle {
-  /* Inherit site fonts for any ad text */
-  font-family: var(--font-dm-sans), "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-}
-
-/* Manual ads styling (keep existing controlled ads) */
-ins.adsbygoogle[data-ad-format="auto"],
-ins.adsbygoogle[data-ad-format="rectangle"] {
-  /* Manual ads with controlled sizing */
-  min-height: 200px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  display: block !important;
-  /* Better mobile handling */
-  max-width: 100% !important;
-  overflow: hidden;
-}
-
-/* Loading state for manual ads */
-ins.adsbygoogle[data-ad-format="auto"]:empty,
-ins.adsbygoogle[data-ad-format="rectangle"]:empty {
-  background: linear-gradient(90deg, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-/* Specific mobile optimizations for header ads */
-@media (max-width: 768px) {
-  .adsbygoogle {
-    /* Ensure better mobile sizing */
-    max-height: 250px !important;
-    overflow: hidden !important;
-  }
-  
-  /* Header ad specific mobile styling */
-  ins.adsbygoogle[data-ad-format="auto"] {
-    min-height: 200px !important;
-    max-height: 250px !important;
-  }
-}
-
-@keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* Container query support for modern browsers */
-@supports (container-type: inline-size) {
-  .article-content {
-    container-type: inline-size;
-  }
-  
-  @container (max-width: 600px) {
-    .adsbygoogle {
-      max-height: 250px !important;
-      margin: 1rem 0 !important;
-    }
-  }
-  
-  @container (min-width: 601px) {
-    .adsbygoogle {
-      max-height: 300px !important;
-      margin: 1.5rem 0 !important;
-    }
-  }
+/* Auto Ads anchor/overlay optimization */
+.adsbygoogle[data-anchor-status] {
+  /* Ensure anchor ads don't interfere with navigation */
+  z-index: 1000 !important;
 }

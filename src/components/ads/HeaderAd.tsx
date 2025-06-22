@@ -48,16 +48,13 @@ export default function HeaderAd() {
     <div ref={adRef} className="w-full my-6 flex justify-center">
       <div className="max-w-4xl w-full">
         {/* Header Ad - After Article Title */}
-        <div className="border border-gray-200 rounded-lg p-3 mb-8 bg-white">
-          <div className="text-xs text-gray-400 text-center mb-2 uppercase tracking-wide">Advertisement</div>
+        <div className="w-full my-6">
           {isVisible ? (
             <ins
               className="adsbygoogle"
               style={{
                 display: 'block',
-                width: '100%',
-                minHeight: '250px',
-                maxHeight: '280px'
+                width: '100%'
               }}
               data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
               data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
@@ -65,20 +62,7 @@ export default function HeaderAd() {
               data-full-width-responsive="true"
             />
           ) : (
-            <div 
-              style={{ 
-                height: '250px', 
-                backgroundColor: '#f8fafc',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#cbd5e1',
-                fontSize: '14px'
-              }}
-            >
-              Loading ad...
-            </div>
+            <div style={{ height: '1px' }} />
           )}
         </div>
       </div>

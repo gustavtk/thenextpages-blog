@@ -27,15 +27,12 @@ export default function MiddleAd() {
     <div className="w-full my-8 flex justify-center">
       <div className="max-w-4xl w-full">
         {/* Middle Ad - Injected into Article Content */}
-        <div className="border border-gray-200 rounded-lg p-3 mb-8 bg-white">
-          <div className="text-xs text-gray-400 text-center mb-2 uppercase tracking-wide">Advertisement</div>
+        <div className="w-full my-8">
           <ins
             className="adsbygoogle"
             style={{
               display: 'block',
-              width: '100%',
-              minHeight: '250px',
-              maxHeight: '300px'
+              width: '100%'
             }}
             data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
             data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_MIDDLE_AD}
