@@ -2,8 +2,12 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ShareButton from '@/components/ShareButton';
+import HeaderAd from '@/components/ads/HeaderAd';
+import FooterAd from '@/components/ads/FooterAd';
+import AdSenseScript from '@/components/ads/AdSenseScript';
 import Link from 'next/link';
 import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/lib/wordpress';
+import { injectMiddleAd, shouldInjectMiddleAd } from '@/lib/contentParser';
 import { Article } from '@/types/article';
 import Image from 'next/image';
 
@@ -28,6 +32,11 @@ async function ArticleContent({ article }: { article: Article }) {
   } catch (error) {
     console.error('Error fetching related articles:', error);
   }
+
+  // Process article content with middle ad injection
+  const processedContent = shouldInjectMiddleAd(article.content) 
+    ? injectMiddleAd(article.content)
+    : article.content;
 
   return (
     <div className="min-h-screen bg-white">
@@ -82,6 +91,9 @@ async function ArticleContent({ article }: { article: Article }) {
             </div>
           </header>
 
+          {/* Header Ad - After article title and meta */}
+          <HeaderAd />
+
           {/* Article Content */}
           <div className="max-w-none mt-12 lg:mt-16">
             {/* Hero Image */}
@@ -98,10 +110,10 @@ async function ArticleContent({ article }: { article: Article }) {
               </div>
             )}
             
-            {/* Render HTML content from WordPress */}
+            {/* Render HTML content from WordPress with injected middle ad */}
             <div 
               className="article-content max-w-none"
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{ __html: processedContent }}
             />
 
 
@@ -119,7 +131,8 @@ async function ArticleContent({ article }: { article: Article }) {
               </div>
             </div>
 
-
+            {/* Footer Ad - After main content */}
+            <FooterAd />
 
             {/* Keep Reading Section */}
             {relatedArticles.length > 0 && (
@@ -184,6 +197,9 @@ async function ArticleContent({ article }: { article: Article }) {
       </main>
 
       <Footer />
+      
+      {/* Initialize AdSense for injected ads */}
+      <AdSenseScript />
     </div>
   );
 }

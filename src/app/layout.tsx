@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const dmSans = DM_Sans({ 
@@ -49,6 +50,16 @@ export default function RootLayout({
 
       </head>
       <body className={`${dmSans.variable} font-sans antialiased`} suppressHydrationWarning={true} style={{minHeight: '100vh'}}>
+        {/* AdSense Auto Ads Script */}
+        {process.env.NEXT_PUBLIC_ADSENSE_AUTO_ADS === 'true' && process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
+        
         {children}
       </body>
     </html>

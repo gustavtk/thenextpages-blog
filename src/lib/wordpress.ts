@@ -1,5 +1,5 @@
 // WordPress REST API utilities
-const WP_API_URL = 'https://www.thenextpages.com/wp-json/wp/v2';
+const WP_API_URL = 'https://pages.thenextpages.com/wp-json/wp/v2';
 
 // Types matching WordPress REST API responses
 export interface WPPost {
@@ -306,12 +306,12 @@ export async function fetchMenus(): Promise<WPMenu[]> {
       `${WP_API_URL}/menus`,
       `${WP_API_URL}/menu-locations`,
       // Common plugin endpoints
-      `https://www.thenextpages.com/wp-json/wp-api-menus/v2/menus`,
-      `https://www.thenextpages.com/wp-json/menus/v1/menus`,
-      `https://www.thenextpages.com/wp-json/menus/v2/menus`,
+      `https://pages.thenextpages.com/wp-json/wp-api-menus/v2/menus`,
+      `https://pages.thenextpages.com/wp-json/menus/v1/menus`,
+      `https://pages.thenextpages.com/wp-json/menus/v2/menus`,
       // Custom endpoint possibilities
-      `https://www.thenextpages.com/wp-json/wp/v2/menu`,
-      `https://www.thenextpages.com/wp-json/custom/v1/menus`,
+      `https://pages.thenextpages.com/wp-json/wp/v2/menu`,
+      `https://pages.thenextpages.com/wp-json/custom/v1/menus`,
     ];
     
     const DEBUG = process.env.NODE_ENV === 'development';
@@ -405,12 +405,12 @@ export async function fetchPrimaryMenu(): Promise<WPMenuItem[]> {
     // Try alternative endpoints for primary menu
     if (DEBUG) console.log('🔄 Trying alternative menu endpoints...');
     const alternativeEndpoints = [
-      `https://www.thenextpages.com/wp-json/wp/v2/menu-items?menus=primary`,
-      `https://www.thenextpages.com/wp-json/wp/v2/menu-items`,
-      `https://www.thenextpages.com/wp-json/wp-api-menus/v2/menu-locations/primary`,
-      `https://www.thenextpages.com/wp-json/wp-api-menus/v2/menu-locations/header`,
-      `https://www.thenextpages.com/wp-json/menus/v1/locations/primary`,
-      `https://www.thenextpages.com/wp-json/wp/v2/menu/primary`
+      `https://pages.thenextpages.com/wp-json/wp/v2/menu-items?menus=primary`,
+      `https://pages.thenextpages.com/wp-json/wp/v2/menu-items`,
+      `https://pages.thenextpages.com/wp-json/wp-api-menus/v2/menu-locations/primary`,
+      `https://pages.thenextpages.com/wp-json/wp-api-menus/v2/menu-locations/header`,
+      `https://pages.thenextpages.com/wp-json/menus/v1/locations/primary`,
+      `https://pages.thenextpages.com/wp-json/wp/v2/menu/primary`
     ];
     
     for (const endpoint of alternativeEndpoints) {
@@ -458,8 +458,8 @@ async function fetchMenuItems(menuId: number): Promise<WPMenuItem[]> {
   try {
     const endpoints = [
       `${WP_API_URL}/menu-items?menus=${menuId}`,
-      `https://www.thenextpages.com/wp-json/wp/v2/menu-items?menus=${menuId}`,
-      `https://www.thenextpages.com/wp-json/wp-api-menus/v2/menu-items?menus=${menuId}`
+      `https://pages.thenextpages.com/wp-json/wp/v2/menu-items?menus=${menuId}`,
+      `https://pages.thenextpages.com/wp-json/wp-api-menus/v2/menu-items?menus=${menuId}`
     ];
     
     for (const endpoint of endpoints) {
