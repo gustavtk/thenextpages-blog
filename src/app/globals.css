@@ -453,19 +453,39 @@ body > .adsbygoogle:first-of-type {
 }
 
 /* Manual ads styling (keep existing controlled ads) */
+ins.adsbygoogle[data-ad-format="auto"],
 ins.adsbygoogle[data-ad-format="rectangle"] {
   /* Manual ads with controlled sizing */
   min-height: 200px;
-  background-color: #f9fafb;
+  background-color: #ffffff;
   border-radius: 8px;
   display: block !important;
+  /* Better mobile handling */
+  max-width: 100% !important;
+  overflow: hidden;
 }
 
 /* Loading state for manual ads */
+ins.adsbygoogle[data-ad-format="auto"]:empty,
 ins.adsbygoogle[data-ad-format="rectangle"]:empty {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
+}
+
+/* Specific mobile optimizations for header ads */
+@media (max-width: 768px) {
+  .adsbygoogle {
+    /* Ensure better mobile sizing */
+    max-height: 250px !important;
+    overflow: hidden !important;
+  }
+  
+  /* Header ad specific mobile styling */
+  ins.adsbygoogle[data-ad-format="auto"] {
+    min-height: 200px !important;
+    max-height: 250px !important;
+  }
 }
 
 @keyframes loading {
