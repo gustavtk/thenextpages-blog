@@ -12,11 +12,10 @@ import {
 
 
 
-// Add ISR (Incremental Static Regeneration) - revalidate every 5 minutes
-export const revalidate = 300;
+// Full SSG - all content pre-generated at build time
 
 export default async function Home() {
-  // Fetch data in parallel for better performance
+  // Fetch data in parallel for better performance at build time
   const [featuredPosts, randomPosts, latestPosts] = await Promise.all([
     fetchFeaturedPosts(1), // Get 1 featured post
     fetchRandomPosts(3, ['featured']), // Get 3 random posts excluding featured

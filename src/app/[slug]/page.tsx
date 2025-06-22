@@ -7,8 +7,7 @@ import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/
 import { Article } from '@/types/article';
 import Image from 'next/image';
 
-// Add ISR - revalidate every 10 minutes
-export const revalidate = 600;
+// Full SSG - all posts pre-generated at build time
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -189,12 +188,35 @@ async function ArticleContent({ article }: { article: Article }) {
   );
 }
 
-// Generate static params for ISR
+// Generate static params for recent posts only (to avoid timeouts)
 export async function generateStaticParams() {
-  // Optionally pre-render the most popular articles
-  // For now, return empty array to use on-demand ISR
-  return [];
+  try {
+    console.log('🏗️  Generating static params for recent posts...');
+    
+    const { fetchPosts } = await import('@/lib/wordpress');
+    
+    // Fetch only the most recent 100 posts to avoid API timeouts
+    const posts = await fetchPosts({ 
+      per_page: 100, // Recent posts only
+      page: 1,
+      orderby: 'date', 
+      order: 'desc' 
+    });
+    
+    console.log(`✅ Pre-generating ${posts.length} most recent posts`);
+    console.log('💡 Older posts will be generated on-demand when first visited');
+    
+    return posts.map((post) => ({
+      slug: post.slug,
+    }));
+    
+  } catch (error) {
+    console.error('❌ Error generating article static params:', error);
+    // Return empty array to allow build to continue
+    return [];
+  }
 }
+
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;

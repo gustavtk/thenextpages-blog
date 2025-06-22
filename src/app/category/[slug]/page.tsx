@@ -1,149 +1,58 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-
-// Disable static generation for dynamic category pages
-export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { fetchCategories, fetchPosts, transformWPPostToArticle, getCategoryColor } from '@/lib/wordpress';
-import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { Article, Category } from '@/types/article';
+
+// Static Site Generation with dynamic params
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
-function CategoryContent({ slug }: { slug: string }) {
-  const [category, setCategory] = useState<Category | null>(null);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
-  const [page, setPage] = useState(1);
 
-  // Load initial data
-  useEffect(() => {
-    loadCategoryData();
-  }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const loadCategoryData = async () => {
-    setLoading(true);
-    try {
-      // Find the category by slug
-      const categories = await fetchCategories();
-      const foundCategory = categories.find(cat => cat.slug === slug);
-      
-      if (!foundCategory) {
-        notFound();
-        return;
-      }
-      
-      setCategory(foundCategory);
-      
-      // Fetch initial posts (15 per page)
-      const wpPosts = await fetchPosts({
-        categories: [foundCategory.id],
-        per_page: 15,
-        page: 1,
-        _embed: true,
-        orderby: 'date',
-        order: 'desc'
-      });
-
-      const transformedArticles = await Promise.all(
-        wpPosts.map(post => transformWPPostToArticle(post))
-      );
-
-      setArticles(transformedArticles);
-      // Only show "Load more" if we got exactly 15 articles AND the category has more than 15 total
-      setHasMore(transformedArticles.length === 15 && foundCategory.count > 15);
-      setPage(1);
-    } catch (error) {
-      console.error('Error loading category data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadMoreArticles = async () => {
-    if (!category || loadingMore) return;
-    
-    setLoadingMore(true);
-    try {
-      // Use a simple approach: fetch from a larger pool and filter
-      // Since WordPress paginates consistently, we'll fetch posts 16-30 (next 15), 
-      // then filter to get the next 6 unique ones
-      const nextPage = page + 1;
-      
-      const wpPosts = await fetchPosts({
-        categories: [category.id],
-        per_page: 15, // Keep consistent page size
-        page: nextPage,
-        _embed: true,
-        orderby: 'date',
-        order: 'desc'
-      });
-
-      const transformedArticles = await Promise.all(
-        wpPosts.map(post => transformWPPostToArticle(post))
-      );
-
-      // Filter out any articles that already exist to prevent duplicates
-      const existingIds = new Set(articles.map(article => article.id));
-      const newArticles = transformedArticles.filter(article => !existingIds.has(article.id));
-      
-      // Take only 6 articles for this load
-      const articlesToAdd = newArticles.slice(0, 6);
-      
-      if (articlesToAdd.length > 0) {
-        setArticles(prev => [...prev, ...articlesToAdd]);
-        setPage(nextPage);
-      }
-      
-      // Check if there are more articles available
-      setHasMore(transformedArticles.length > 0 && articlesToAdd.length === 6);
-    } catch (error) {
-      console.error('Error loading more articles:', error);
-      // If we get a 400 error about invalid page number, it means no more pages
-      setHasMore(false);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/4 mb-8"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white border border-gray-200 rounded-2xl p-6">
-                  <div className="h-48 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/3 mb-3"></div>
-                  <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+// Generate static params for all categories at build time
+export async function generateStaticParams() {
+  try {
+    const categories = await fetchCategories({ per_page: 100 });
+    return categories.map((category) => ({
+      slug: category.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating category static params:', error);
+    return [];
   }
+}
 
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = await params;
+  
+  // Find the category by slug
+  const categories = await fetchCategories();
+  const category = categories.find(cat => cat.slug === slug);
+  
   if (!category) {
     notFound();
     return null;
   }
+  
+  // Fetch recent posts for this category (to avoid timeouts)
+  const wpPosts = await fetchPosts({
+    categories: [category.id],
+    per_page: 50, // Reasonable limit to avoid timeouts
+    page: 1,
+    _embed: true,
+    orderby: 'date',
+    order: 'desc'
+  });
+
+  const articles = await Promise.all(
+    wpPosts.map(post => transformWPPostToArticle(post))
+  );
+
+  // No "load more" needed since all posts are pre-generated
+  const hasMore = false;
 
   return (
     <div className="min-h-screen bg-white">
@@ -232,23 +141,15 @@ function CategoryContent({ slug }: { slug: string }) {
               ))}
             </div>
 
-            {/* Load More Button */}
+            {/* Load More Button - Hidden since all posts are pre-generated */}
             {hasMore && (
               <div className="mt-12 text-center">
-                <button 
-                  onClick={loadMoreArticles}
-                  disabled={loadingMore}
-                  className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                <Link 
+                  href={`/category/${category.slug}?page=2`}
+                  className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
                 >
-                  {loadingMore ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    'Load more stories'
-                  )}
-                </button>
+                  Load more stories
+                </Link>
               </div>
             )}
             
@@ -269,31 +170,4 @@ function CategoryContent({ slug }: { slug: string }) {
       <Footer />
     </div>
   );
-}
-
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const [slug, setSlug] = useState<string>('');
-  
-  useEffect(() => {
-    params.then(resolvedParams => {
-      setSlug(resolvedParams.slug);
-    });
-  }, [params]);
-
-  if (!slug) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  return <CategoryContent slug={slug} />;
 } 

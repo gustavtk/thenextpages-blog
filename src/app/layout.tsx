@@ -5,7 +5,9 @@ import "./globals.css";
 const dmSans = DM_Sans({ 
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-dm-sans"
+  variable: "--font-dm-sans",
+  display: 'swap',
+  preload: true
 });
 
 export const metadata: Metadata = {
@@ -46,7 +48,7 @@ export default function RootLayout({
         
 
       </head>
-      <body className={`${dmSans.variable} font-sans antialiased`} suppressHydrationWarning={true}>
+      <body className={`${dmSans.variable} font-sans antialiased`} suppressHydrationWarning={true} style={{minHeight: '100vh'}}>
         {children}
       </body>
     </html>
