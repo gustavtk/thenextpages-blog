@@ -358,11 +358,18 @@ input[type="search"]:focus {
 
 /* AdSense Auto Ads Responsive Configuration */
 
-/* Ensure header stays above any ads */
-header {
+/* Ensure main site header stays above any ads */
+body > div > header,
+body > header {
   z-index: 9999 !important;
   position: sticky !important;
   top: 0 !important;
+}
+
+/* Ensure article headers are NOT sticky */
+article header,
+.article-content header {
+  position: static !important;
 }
 
 /* Auto Ads responsive container rules */
