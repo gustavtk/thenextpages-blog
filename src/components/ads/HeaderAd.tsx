@@ -45,7 +45,8 @@ export default function HeaderAd() {
   }
 
   return (
-    <div ref={adRef} className="w-full my-6" style={{ minHeight: 'fit-content', isolation: 'isolate', maxWidth: '100%', boxSizing: 'border-box' }}>
+    <div ref={adRef} className="w-full my-6 px-4 sm:px-6 lg:px-8" style={{ minHeight: 'fit-content', isolation: 'isolate' }}>
+      <div className="max-w-4xl mx-auto" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
       {isVisible ? (
         <ins
           className="adsbygoogle"
@@ -58,6 +59,7 @@ export default function HeaderAd() {
       ) : (
         <div style={{ height: '1px', width: '100%' }} />
       )}
+      </div>
     </div>
   );
 }

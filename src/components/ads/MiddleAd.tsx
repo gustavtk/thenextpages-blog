@@ -24,7 +24,8 @@ export default function MiddleAd() {
   }
 
   return (
-    <div className="w-full my-8" style={{ minHeight: 'fit-content', isolation: 'isolate', maxWidth: '100%', boxSizing: 'border-box' }}>
+    <div className="w-full my-8 px-4 sm:px-6 lg:px-8" style={{ minHeight: 'fit-content', isolation: 'isolate' }}>
+      <div className="max-w-4xl mx-auto" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
@@ -33,6 +34,7 @@ export default function MiddleAd() {
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
+      </div>
     </div>
   );
 }

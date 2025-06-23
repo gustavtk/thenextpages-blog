@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ContentRenderer from '@/components/ContentRenderer';
 import Link from 'next/link';
 import { fetchPages } from '@/lib/wordpress';
 
@@ -52,7 +53,8 @@ export default async function WordPressPage({ params }: PageProps) {
             {page.title.rendered}
           </h1>
           
-          <div 
+          <ContentRenderer 
+            htmlContent={page.content.rendered}
             className="prose-headings:font-semibold prose-headings:text-gray-900
               prose-p:text-gray-700 prose-p:leading-relaxed
               prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
@@ -62,7 +64,6 @@ export default async function WordPressPage({ params }: PageProps) {
               prose-pre:bg-gray-900 prose-pre:text-gray-100
               prose-ul:list-disc prose-ol:list-decimal
               prose-li:text-gray-700"
-            dangerouslySetInnerHTML={{ __html: page.content.rendered }}
           />
         </article>
       </main>

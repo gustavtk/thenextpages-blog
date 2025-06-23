@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { fetchPost, fetchRelatedPostsByTags, transformWPPostToArticle } from '@/lib/wordpress';
 import { splitContentForMiddleAd, shouldInjectMiddleAd } from '@/lib/contentParser';
 import MiddleAd from '@/components/ads/MiddleAd';
+import ContentRenderer from '@/components/ContentRenderer';
 import { Article } from '@/types/article';
 import Image from 'next/image';
 
@@ -111,27 +112,22 @@ async function ArticleContent({ article }: { article: Article }) {
               </div>
             )}
             
-            {/* Render HTML content from WordPress with middle ad component */}
-            <div 
-              className="article-content max-w-none" 
-              data-ad-layout="in-article" 
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            >
-              {/* Content before middle ad */}
-              <div 
-                data-ad-layout-key="-fb+5w+4e-db+86" 
-                dangerouslySetInnerHTML={{ __html: beforeAd }} 
+            {/* Render HTML content from WordPress - Auto ads can now insert automatically */}
+            <div className="article-content max-w-none">
+              {/* Content before middle ad - Live DOM for auto ads */}
+              <ContentRenderer 
+                htmlContent={beforeAd}
+                className=""
               />
               
               {/* Middle Ad Component - Manual placement */}
               {shouldShowMiddleAd && <MiddleAd />}
               
-              {/* Content after middle ad */}
+              {/* Content after middle ad - Live DOM for auto ads */}
               {afterAd && (
-                <div 
-                  data-ad-layout-key="-fb+5w+4e-db+87" 
-                  dangerouslySetInnerHTML={{ __html: afterAd }} 
+                <ContentRenderer 
+                  htmlContent={afterAd}
+                  className=""
                 />
               )}
             </div>
