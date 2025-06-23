@@ -1,0 +1,202 @@
+/**
+ * SSG-compatible AdSense styles for smooth loading transitions
+ * Optimized for Core Web Vitals and preventing layout shifts
+ */
+
+/* Base ad container styles */
+.adsense-container {
+  transition: all 0.3s ease-in-out;
+  contain: layout style;
+  isolation: isolate;
+}
+
+/* Loading state animations */
+.adsense-skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: adsense-skeleton 1.5s infinite;
+}
+
+@keyframes adsense-skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Smooth fade-in for ads */
+.adsense-fade-in {
+  animation: adsense-fade-in 0.5s ease-in-out;
+}
+
+@keyframes adsense-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Collapse animation */
+.adsense-collapse {
+  animation: adsense-collapse 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+@keyframes adsense-collapse {
+  from {
+    max-height: 300px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Error state styles */
+.adsense-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.adsense-retry-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.adsense-retry-button:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive ad containers */
+.adsense-responsive {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header ad specific styles */
+.adsense-header {
+  margin: 1.5rem auto;
+  max-width: 728px;
+}
+
+@media (max-width: 768px) {
+  .adsense-header {
+    margin: 1rem auto;
+    max-width: 320px;
+  }
+}
+
+/* Footer ad specific styles */
+.adsense-footer {
+  margin: 2rem auto;
+  max-width: 728px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .adsense-footer {
+    margin: 1.5rem auto;
+    max-width: 320px;
+  }
+}
+
+/* Middle ad specific styles */
+.adsense-middle {
+  margin: 2rem auto;
+  max-width: 300px;
+  clear: both;
+}
+
+@media (max-width: 768px) {
+  .adsense-middle {
+    max-width: 320px;
+  }
+}
+
+/* Advertisement labels */
+.adsense-label {
+  font-size: 10px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .adsense-skeleton {
+    background: linear-gradient(
+      90deg,
+      #374151 25%,
+      #4b5563 50%,
+      #374151 75%
+    );
+  }
+  
+  .adsense-error {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+  
+  .adsense-label {
+    color: #6b7280;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .adsense-container {
+    border: 1px solid;
+  }
+  
+  .adsense-label {
+    font-weight: bold;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .adsense-skeleton {
+    animation: none;
+    background: #f0f0f0;
+  }
+  
+  .adsense-fade-in {
+    animation: none;
+  }
+  
+  .adsense-collapse {
+    animation: none;
+  }
+  
+  .adsense-container {
+    transition: none;
+  }
+}

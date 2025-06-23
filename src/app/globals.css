@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Import AdSense styles for SSG-compatible ad loading */
+@import "../styles/adsense.css";
+
 /* Prevent FOUC by setting base styles immediately */
 html {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
