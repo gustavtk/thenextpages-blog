@@ -25,23 +25,9 @@ export default function ContentRenderer({ htmlContent, className = '' }: Content
         contentRef.current.appendChild(tempDiv.firstChild);
       }
       
-      // Trigger AdSense to scan for auto ad insertion points
-      // This tells Google's script to analyze the new content
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
-        try {
-          // Small delay to ensure DOM is fully rendered
-          setTimeout(() => {
-            // This doesn't push a new ad, it tells AdSense to rescan the page
-            if (window.adsbygoogle) {
-              window.adsbygoogle.forEach(() => {
-                // AdSense will automatically find insertion points in the new DOM structure
-              });
-            }
-          }, 100);
-        } catch (error) {
-          console.log('AdSense auto scan note:', error);
-        }
-      }
+      // Note: AdSense auto ads will automatically scan the new DOM content
+      // No manual triggering needed - the live DOM structure we created
+      // will be detected by Google's auto ads algorithm automatically
     }
   }, [htmlContent]);
 

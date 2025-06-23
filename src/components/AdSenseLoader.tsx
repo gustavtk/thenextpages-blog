@@ -2,10 +2,13 @@
 
 import Script from 'next/script';
 
+// Global variable outside React to persist across all instances and navigation
+let ADSENSE_PAGE_LEVEL_INITIALIZED = false;
+
 declare global {
   interface Window {
     adsbygoogle: unknown[];
-    __adsense_initialized_once?: boolean;
+    __adsense_page_level_done?: boolean;
   }
 }
 
@@ -15,47 +18,67 @@ export default function AdSenseLoader() {
     return null;
   }
 
-  // Simplified initialization that only runs once per page load
+  // Bulletproof initialization that absolutely prevents duplicates
   const handleLoad = () => {
-    // Use a simple document-level flag that persists across all components
-    if (typeof window !== 'undefined' && !window.__adsense_initialized_once) {
-      try {
-        // Mark as initialized immediately to prevent any race conditions
-        window.__adsense_initialized_once = true;
+    // Check all possible sources to prevent any duplicate calls
+    const globalFlag = ADSENSE_PAGE_LEVEL_INITIALIZED;
+    const windowFlag = typeof window !== 'undefined' && window.__adsense_page_level_done;
+    const sessionFlag = typeof window !== 'undefined' && sessionStorage.getItem('adsense_page_level_init') === 'true';
+    
+    // If ANY flag is set, do not initialize
+    if (globalFlag || windowFlag || sessionFlag) {
+      console.log('AdSense page-level ads already initialized, skipping');
+      return;
+    }
+    
+    try {
+      // Set ALL flags immediately before any AdSense calls
+      ADSENSE_PAGE_LEVEL_INITIALIZED = true;
+      if (typeof window !== 'undefined') {
+        window.__adsense_page_level_done = true;
+        sessionStorage.setItem('adsense_page_level_init', 'true');
         
         // Initialize AdSense array
         window.adsbygoogle = window.adsbygoogle || [];
         
-        // Small delay to ensure the script is fully loaded
-        setTimeout(() => {
-          window.adsbygoogle.push({
-            google_ad_client: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID,
-            enable_page_level_ads: true
-          });
-          console.log('AdSense Auto Ads initialized successfully');
-        }, 100);
+        // Push page-level ads configuration once and only once
+        window.adsbygoogle.push({
+          google_ad_client: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID,
+          enable_page_level_ads: true
+        });
         
-      } catch (error) {
-        console.error('Auto Ads initialization error:', error);
-        // Reset flag only on error
-        window.__adsense_initialized_once = false;
+        console.log('AdSense page-level ads initialized successfully');
+      }
+    } catch (error) {
+      console.error('AdSense initialization error:', error);
+      // On error, reset flags to allow retry
+      ADSENSE_PAGE_LEVEL_INITIALIZED = false;
+      if (typeof window !== 'undefined') {
+        window.__adsense_page_level_done = false;
+        sessionStorage.removeItem('adsense_page_level_init');
       }
     }
   };
 
+  // Check if we should load the script (only once per session)
+  const shouldLoadScript = typeof window === 'undefined' || 
+    (!ADSENSE_PAGE_LEVEL_INITIALIZED && 
+     !window.__adsense_page_level_done && 
+     sessionStorage.getItem('adsense_page_level_init') !== 'true');
+
   return (
     <>
-      {/* Only load script if not already initialized */}
-      {typeof window === 'undefined' || !window.__adsense_initialized_once ? (
+      {/* Only load script once per browser session */}
+      {shouldLoadScript && (
         <Script
-          id="adsense-auto-ads-script"
+          id="adsense-page-level-script"
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
           crossOrigin="anonymous"
           strategy="afterInteractive"
           onLoad={handleLoad}
         />
-      ) : null}
+      )}
       
       {/* Auto Ads metadata */}
       <meta name="google-adsense-platform-account" content={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID} />
