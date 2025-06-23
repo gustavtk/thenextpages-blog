@@ -1,349 +1,491 @@
-# SSG-Compatible AdSense Implementation Guide
+# SSG-Compatible AdSense Implementation with Collapse Functionality
 
-## 🎯 Overview
+## Overview
 
-This implementation provides a complete SSG-compatible AdSense solution with automatic collapse functionality for empty ad slots. It's designed specifically for Next.js Static Site Generation with proper hydration handling and Core Web Vitals optimization.
+This document provides a comprehensive guide for implementing Google AdSense with collapse functionality in a Next.js SSG (Static Site Generation) application. The implementation addresses the unique challenges of SSG environments where ads must load client-side after static page generation.
 
-## 🚀 Features
+## Key Features
 
-- ✅ **SSG Compatible**: Works perfectly with `getStaticProps` and `getStaticPaths`
-- ✅ **Hydration Safe**: No mismatches between server and client rendering
-- ✅ **Auto Collapse**: Empty ad slots automatically collapse to prevent layout issues
-- ✅ **Three-Phase Loading**: Static → Hydrated → Ads Loaded with smooth transitions
-- ✅ **Core Web Vitals Optimized**: Prevents layout shifts (CLS)
-- ✅ **Error Handling**: Graceful fallbacks and retry mechanisms
-- ✅ **Performance**: Minimal impact on build times and runtime performance
-- ✅ **Accessibility**: Screen reader friendly with proper ARIA labels
+✅ **SSG-Compatible**: Handles three-phase loading (static → hydrated → ads loaded)  
+✅ **Collapse Functionality**: Automatically collapses empty/unfilled ad slots  
+✅ **Hydration Safe**: Prevents mismatches between server and client  
+✅ **Performance Optimized**: Minimizes layout shifts and improves Core Web Vitals  
+✅ **Error Recovery**: Robust error handling with retry mechanisms  
+✅ **Accessibility**: ARIA labels and proper semantic markup  
+✅ **TypeScript**: Full type safety throughout  
 
-## 📁 File Structure
+## Architecture
 
-```
-src/
-├── components/
-│   ├── ads/
-│   │   ├── ClientOnlyAd.tsx          # Client-side wrapper
-│   │   ├── AdSkeleton.tsx            # Loading placeholder
-│   │   ├── AdErrorBoundary.tsx       # Error handling
-│   │   ├── HeaderAd.tsx              # Header ad component
-│   │   ├── FooterAd.tsx              # Footer ad component
-│   │   └── MiddleAd.tsx              # Middle/content ad component
-│   └── AdSenseLoader.tsx             # Main script loader
-├── hooks/
-│   └── useAdSenseWithCollapse.ts     # Core ad logic hook
-├── lib/
-│   └── adsenseUtils.ts               # Utility functions
-└── styles/
-    └── adsense.css                   # Ad-specific styles
-```
+### Three-Phase Loading Process
 
-## ⚙️ Configuration
+1. **Static Phase**: Server renders skeleton/placeholder
+2. **Hydration Phase**: Client takes over, starts AdSense initialization
+3. **Ads Loaded Phase**: Ads display or collapse if empty
+
+### Core Components
+
+- `useAdSenseWithCollapse` - Enhanced hook with timing coordination
+- `AdSenseLoader` - Script loader with retry logic
+- `ClientOnlyAd` - SSG-safe wrapper component
+- `AdSkeleton` - Loading placeholder component
+- Individual ad components (HeaderAd, MiddleAd, FooterAd)
+
+## Installation & Setup
 
 ### 1. Environment Variables
 
-Update your `.env.local`:
+Add to your `.env.local`:
 
 ```bash
-# Required: Your AdSense Publisher ID
-NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-your-publisher-id
+# Required
+NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-xxxxxxxxxx
 
-# Required: Individual ad unit IDs
+# Ad unit slots
 NEXT_PUBLIC_ADSENSE_HEADER_AD=1234567890
 NEXT_PUBLIC_ADSENSE_MIDDLE_AD=1234567891
 NEXT_PUBLIC_ADSENSE_FOOTER_AD=1234567892
 
-# Optional: Enable auto ads (default: false)
+# Optional: Enable auto ads
 NEXT_PUBLIC_ADSENSE_AUTO_ADS=true
 ```
 
-### 2. Import Styles
+### 2. Layout Integration
 
-Add to your `globals.css` or import in layout:
-
-```css
-@import '../styles/adsense.css';
-```
-
-### 3. Update Layout
-
-Your `layout.tsx` should include the AdSenseLoader:
+Update your `app/layout.tsx`:
 
 ```tsx
-import AdSenseLoader from '@/components/AdSenseLoader';
+import AdSenseLoader from "@/components/AdSenseLoader";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <head>
         {/* Your existing head content */}
       </head>
-      <body>
+      <body suppressHydrationWarning={true}>
+        {/* Load AdSense script */}
         <AdSenseLoader />
-        {children}
+        
+        {/* Auto Ads optimization wrapper */}
+        <div data-ad-layout="in-article" data-ad-format="auto" data-full-width-responsive="true">
+          {children}
+        </div>
       </body>
     </html>
   );
 }
 ```
 
-## 🔧 Usage Examples
+## Usage Examples
 
-### Basic Page with Ads
+### Basic Ad Implementation
 
 ```tsx
-// pages/blog/[slug].tsx or app/blog/[slug]/page.tsx
 import HeaderAd from '@/components/ads/HeaderAd';
-import FooterAd from '@/components/ads/FooterAd';
 import MiddleAd from '@/components/ads/MiddleAd';
-import AdErrorBoundary from '@/components/ads/AdErrorBoundary';
+import FooterAd from '@/components/ads/FooterAd';
 
-export default function BlogPost({ post }: { post: Post }) {
+export default function ArticlePage() {
   return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>{post.excerpt}</p>
+    <main>
+      <HeaderAd />
       
-      {/* Header ad after title */}
-      <AdErrorBoundary adType="header">
-        <HeaderAd />
-      </AdErrorBoundary>
-      
-      <div>
-        {/* First part of content */}
-        {post.content.slice(0, post.content.length / 2)}
+      <article>
+        <h1>Article Title</h1>
+        <p>Article content...</p>
         
-        {/* Middle ad injected in content */}
-        <AdErrorBoundary adType="middle">
-          <MiddleAd />
-        </AdErrorBoundary>
+        {/* Ad will automatically collapse if empty */}
+        <MiddleAd />
         
-        {/* Rest of content */}
-        {post.content.slice(post.content.length / 2)}
-      </div>
+        <p>More content...</p>
+      </article>
       
-      {/* Footer ad before related posts */}
-      <AdErrorBoundary adType="footer">
-        <FooterAd />
-      </AdErrorBoundary>
-    </article>
+      <FooterAd />
+    </main>
   );
-}
-
-// SSG functions
-export async function getStaticProps({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug);
-  
-  return {
-    props: { post },
-    revalidate: 3600, // ISR: regenerate every hour
-  };
-}
-
-export async function getStaticPaths() {
-  const posts = await getAllPosts();
-  
-  return {
-    paths: posts.map((post) => ({
-      params: { slug: post.slug },
-    })),
-    fallback: 'blocking',
-  };
 }
 ```
 
 ### Custom Ad Component
 
 ```tsx
+'use client';
+
 import { useAdSenseWithCollapse } from '@/hooks/useAdSenseWithCollapse';
 import ClientOnlyAd from '@/components/ads/ClientOnlyAd';
 import AdSkeleton from '@/components/ads/AdSkeleton';
 
-function CustomAd({ adSlot, height = 250 }: { adSlot: string; height?: number }) {
+function CustomAdContent() {
   const { adRef, adState, retryAd } = useAdSenseWithCollapse({
-    adSlot,
+    adSlot: 'YOUR_AD_SLOT_ID',
     adFormat: 'auto',
     fullWidthResponsive: true,
     collapseEmpty: true,
-    timeoutMs: 5000,
+    timeoutMs: 8000,
+    retryCount: 2,
   });
 
+  // Collapse if empty
   if (adState.isCollapsed || adState.isEmpty) {
     return null;
   }
 
   return (
-    <ClientOnlyAd>
-      <div className="my-8">
-        {adState.isLoading && <AdSkeleton height={height} />}
-        
-        {adState.hasError && (
-          <div className="text-center py-4">
-            <button onClick={retryAd}>Retry Ad</button>
-          </div>
-        )}
-        
-        <div ref={adRef} className={adState.isLoaded ? 'opacity-100' : 'opacity-0'}>
-          <ins
-            className="adsbygoogle"
-            style={{ display: 'block' }}
-            data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
-            data-ad-slot={adSlot}
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          />
+    <div className="my-4">
+      {adState.isLoading && <AdSkeleton height={200} />}
+      
+      {adState.hasError && (
+        <div className="text-center py-4">
+          <p>Ad failed to load</p>
+          <button onClick={retryAd}>Retry</button>
         </div>
+      )}
+      
+      <div ref={adRef}>
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
+          data-ad-slot="YOUR_AD_SLOT_ID"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
       </div>
+    </div>
+  );
+}
+
+export default function CustomAd() {
+  const fallback = <AdSkeleton height={200} animate={false} />;
+  
+  return (
+    <ClientOnlyAd fallback={fallback}>
+      <CustomAdContent />
     </ClientOnlyAd>
   );
 }
 ```
 
-## 🔍 Advanced Features
-
-### 1. Conditional Ad Loading
+### SSG Page with getStaticProps
 
 ```tsx
-import { areAdsBlocked, validateAdConfig } from '@/lib/adsenseUtils';
+import { GetStaticProps } from 'next';
+import HeaderAd from '@/components/ads/HeaderAd';
 
-function ConditionalAd() {
-  const [showAd, setShowAd] = useState(false);
+interface ArticlePageProps {
+  article: {
+    title: string;
+    content: string;
+  };
+}
+
+export default function ArticlePage({ article }: ArticlePageProps) {
+  return (
+    <main>
+      {/* Ad loads client-side after SSG */}
+      <HeaderAd />
+      
+      <article>
+        <h1>{article.title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: article.content }} />
+      </article>
+    </main>
+  );
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  // Fetch your data
+  const article = await fetchArticle(params?.slug as string);
   
-  useEffect(() => {
-    areAdsBlocked().then(blocked => {
-      if (!blocked && validateAdConfig({
-        publisherId: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID,
-        adSlot: process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD,
-      })) {
-        setShowAd(true);
-      }
-    });
-  }, []);
+  return {
+    props: {
+      article,
+    },
+    revalidate: 3600, // ISR: regenerate every hour
+  };
+};
+
+export const getStaticPaths = async () => {
+  const articles = await fetchAllArticles();
   
-  if (!showAd) return null;
-  
-  return <HeaderAd />;
+  return {
+    paths: articles.map((article) => ({
+      params: { slug: article.slug },
+    })),
+    fallback: 'blocking',
+  };
+};
+```
+
+## Configuration Options
+
+### Hook Configuration
+
+```tsx
+const { adRef, adState, retryAd } = useAdSenseWithCollapse({
+  adSlot: string;                    // Required: AdSense ad slot ID
+  adFormat?: string;                 // Default: 'auto'
+  fullWidthResponsive?: boolean;     // Default: true
+  collapseEmpty?: boolean;           // Default: true
+  timeoutMs?: number;                // Default: 8000ms
+  retryCount?: number;               // Default: 2
+});
+```
+
+### Ad States
+
+```tsx
+interface AdState {
+  isLoading: boolean;     // Currently loading
+  isLoaded: boolean;      // Successfully loaded
+  isEmpty: boolean;       // Detected as empty/unfilled
+  hasError: boolean;      // Error occurred
+  isCollapsed: boolean;   // Collapsed due to empty state
+  isHydrated: boolean;    // Client-side hydration complete
+  loadAttempts: number;   // Number of load attempts
 }
 ```
 
-### 2. Performance Monitoring
+### Skeleton Variants
 
 ```tsx
-import { logAdMetrics } from '@/lib/adsenseUtils';
+<AdSkeleton
+  height={100}              // Height in pixels
+  width="100%"              // Width (string or number)
+  showLabel={true}          // Show loading label
+  variant="default"         // 'default' | 'compact' | 'banner'
+  animate={true}            // Enable animation
+  className=""              // Additional CSS classes
+/>
+```
 
-function MonitoredAd() {
-  const startTime = useRef(Date.now());
-  const { adRef, adState } = useAdSenseWithCollapse({
-    adSlot: process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD || '',
-    collapseEmpty: true,
-  });
+## Best Practices
+
+### 1. Performance Optimization
+
+```tsx
+// Use different timeouts based on ad placement
+const headerTimeout = 8000;   // Above fold - faster timeout
+const middleTimeout = 10000;  // In content - longer timeout
+const footerTimeout = 12000;  // Below fold - longest timeout
+```
+
+### 2. Error Handling
+
+```tsx
+// Monitor ad performance
+import { logAdMetrics, handleAdError } from '@/lib/adsenseUtils';
+
+// Custom error handling
+const handleCustomError = (error: Error, adType: string) => {
+  console.error(`Ad error in ${adType}:`, error);
   
-  useEffect(() => {
-    if (adState.isLoaded || adState.isEmpty || adState.hasError) {
-      logAdMetrics('header', {
-        loadTime: Date.now() - startTime.current,
-        isEmpty: adState.isEmpty,
-        hasError: adState.hasError,
-      });
-    }
-  }, [adState]);
-  
-  // ... rest of component
-}
-```
-
-## 🐛 Debugging
-
-### Common Issues and Solutions
-
-#### 1. Ads not showing after implementing collapse
-
-```typescript
-// Check browser console for these messages:
-// "[AdSense] Page-level ads already initialized"
-// "[AdSense] Script loading error"
-// "Ad failed to load"
-
-// Debugging steps:
-console.log('Publisher ID:', process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID);
-console.log('Ad Slot:', process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD);
-console.log('Auto Ads:', process.env.NEXT_PUBLIC_ADSENSE_AUTO_ADS);
-```
-
-#### 2. Hydration mismatches
-
-```tsx
-// Ensure you're using ClientOnlyAd wrapper:
-<ClientOnlyAd>
-  <HeaderAd />
-</ClientOnlyAd>
-```
-
-#### 3. Layout shifts during loading
-
-```css
-/* Add to your CSS */
-.ad-container {
-  min-height: 100px; /* Reserve space */
-  contain: layout style; /* Prevent layout thrashing */
-}
-```
-
-### Development Mode Features
-
-- Error boundaries show detailed error information
-- Console logging for ad state changes
-- Visual error notifications
-- Retry functionality for failed ads
-
-## 📊 Performance Optimization
-
-### Core Web Vitals
-
-- **CLS (Cumulative Layout Shift)**: Prevented by skeleton placeholders and reserved space
-- **LCP (Largest Contentful Paint)**: Ads load after main content with `afterInteractive` strategy
-- **FID (First Input Delay)**: Non-blocking ad loading
-
-### Build Optimization
-
-- Client-side only rendering prevents SSR overhead
-- Dynamic imports for ad components
-- Minimal impact on bundle size
-
-## 🔒 Best Practices
-
-1. **Always wrap ads in error boundaries**
-2. **Use ClientOnlyAd for SSG compatibility**
-3. **Implement proper loading states**
-4. **Test with ad blockers enabled**
-5. **Monitor ad performance metrics**
-6. **Respect user preferences (reduced motion, etc.)**
-7. **Follow Google AdSense policies**
-
-## 🚀 Deployment Checklist
-
-- [ ] Environment variables configured
-- [ ] AdSense account approved
-- [ ] Ad units created in AdSense dashboard
-- [ ] Test on production domain (ads won't show on localhost)
-- [ ] Verify no console errors
-- [ ] Check Core Web Vitals scores
-- [ ] Test with ad blockers
-- [ ] Verify proper collapse behavior
-- [ ] Test on mobile devices
-- [ ] Monitor error rates
-
-## 📈 Analytics Integration
-
-```tsx
-// Track ad performance
-useEffect(() => {
-  if (adState.isLoaded) {
-    // Google Analytics 4
-    gtag('event', 'ad_loaded', {
-      ad_type: 'header',
-      ad_slot: adSlot,
+  // Send to analytics
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'ad_error', {
+      ad_type: adType,
+      error_message: error.message,
     });
   }
-}, [adState.isLoaded]);
+};
 ```
 
-This implementation provides a robust, SSG-compatible AdSense solution that maintains excellent performance while providing smooth user experiences.
+### 3. Testing
+
+```tsx
+// Development mode testing
+if (process.env.NODE_ENV === 'development') {
+  // Use test ads
+  data-adtest="on"
+  
+  // Enable debug logging
+  console.log('[AdSense Debug]', adState);
+}
+```
+
+### 4. Core Web Vitals Optimization
+
+```tsx
+// Prevent layout shifts
+<div style={{
+  contain: 'layout style size',  // CSS containment
+  isolation: 'isolate',         // Create new stacking context
+  minHeight: '100px',           // Reserve space
+}}>
+  {/* Ad content */}
+</div>
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Ads Not Displaying
+
+**Symptoms**: Ads show loading skeleton but never display
+**Solutions**:
+- Check environment variables are set correctly
+- Verify ad slot IDs in AdSense dashboard
+- Ensure AdSense account is approved
+- Check browser console for script loading errors
+
+#### 2. Hydration Mismatches
+
+**Symptoms**: Console warnings about hydration mismatches
+**Solutions**:
+- Ensure `ClientOnlyAd` wrapper is used
+- Add `suppressHydrationWarning={true}` to body tag
+- Check that fallback states match between server and client
+
+#### 3. Layout Shifts
+
+**Symptoms**: Content jumps when ads load/collapse
+**Solutions**:
+- Use proper skeleton placeholders
+- Set appropriate `minHeight` values
+- Implement CSS containment
+- Test with slow network connections
+
+#### 4. Ad Blockers
+
+**Symptoms**: Ads never load on some users' browsers
+**Solutions**:
+- Implement ad blocker detection
+- Provide fallback content
+- Monitor ad fill rates
+
+### Debug Tools
+
+#### Development Indicators
+
+The implementation includes visual debug indicators in development mode:
+
+- **Green indicator**: AdSense script loaded successfully
+- **Red indicator**: Script loading failed with retry information
+- **Console logs**: Detailed loading progression
+
+#### Performance Monitoring
+
+```tsx
+// Add performance monitoring
+const startTime = performance.now();
+
+// After ad loads
+const loadTime = performance.now() - startTime;
+console.log(`Ad loaded in ${loadTime}ms`);
+```
+
+## Advanced Features
+
+### 1. Custom Empty Detection
+
+```tsx
+// Extend empty ad detection
+const customDetectEmpty = (element: Element) => {
+  const insElement = element.querySelector('ins.adsbygoogle');
+  if (!insElement) return true;
+  
+  // Custom detection logic
+  return insElement.clientHeight <= 1 || 
+         insElement.getAttribute('data-ad-status') === 'unfilled';
+};
+```
+
+### 2. A/B Testing
+
+```tsx
+// Test different ad configurations
+const adConfig = Math.random() > 0.5 ? {
+  timeoutMs: 8000,
+  collapseEmpty: true,
+} : {
+  timeoutMs: 12000,
+  collapseEmpty: false,
+};
+```
+
+### 3. Ad Refresh
+
+```tsx
+// Refresh ads on navigation
+import { refreshAd } from '@/lib/adsenseUtils';
+
+const handleRefresh = async () => {
+  const success = await refreshAd(adRef.current);
+  if (!success) {
+    console.warn('Ad refresh failed');
+  }
+};
+```
+
+## Migration Guide
+
+### From Previous Implementation
+
+1. **Update Hook Usage**:
+   ```tsx
+   // Old
+   const { adRef, adState } = useAdSenseWithCollapse(config);
+   
+   // New
+   const { adRef, adState, retryAd } = useAdSenseWithCollapse(config);
+   ```
+
+2. **Add Fallback Props**:
+   ```tsx
+   // Old
+   <ClientOnlyAd>
+     <AdContent />
+   </ClientOnlyAd>
+   
+   // New
+   <ClientOnlyAd fallback={<AdSkeleton />}>
+     <AdContent />
+   </ClientOnlyAd>
+   ```
+
+3. **Update Error Handling**:
+   ```tsx
+   // Add retry functionality
+   {adState.hasError && (
+     <button onClick={retryAd}>Retry</button>
+   )}
+   ```
+
+## Production Checklist
+
+- [ ] Environment variables configured
+- [ ] AdSense account approved and active
+- [ ] Ad slot IDs created in AdSense dashboard
+- [ ] `ads.txt` file added to domain root
+- [ ] Performance testing completed
+- [ ] Core Web Vitals scores acceptable
+- [ ] Cross-browser testing completed
+- [ ] Error monitoring implemented
+- [ ] Analytics tracking configured
+
+## Support
+
+For issues and questions:
+1. Check the troubleshooting section above
+2. Review browser console for errors
+3. Test with AdSense test ads first
+4. Verify network requests in DevTools
+
+## Changelog
+
+### v2.0.0 (Current)
+- Enhanced SSG compatibility
+- Improved collapse detection
+- Added retry mechanisms
+- Better error handling
+- Accessibility improvements
+- Performance optimizations
+
+### v1.0.0 (Previous)
+- Basic AdSense integration
+- Simple collapse functionality

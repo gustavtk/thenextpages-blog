@@ -1,26 +1,56 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useState, useRef } from 'react';
+
+interface ClientOnlyAdProps {
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+  hydrationDelay?: number;
+}
 
 /**
- * SSG-compatible client-only wrapper that prevents hydration mismatches
- * This component ensures ads only render on the client side
+ * Enhanced SSG-compatible client-only wrapper for ads
+ * Features:
+ * - Prevents hydration mismatches with proper client-side detection  
+ * - Provides skeleton/fallback states during SSR and hydration
+ * - Coordinates with AdSense script loading
+ * - Optimized for Core Web Vitals and layout stability
+ * - Handles three-phase loading: static → hydrated → ads loaded
  */
-const ClientOnlyAd = ({ children }: { children: React.ReactNode }) => {
+const ClientOnlyAd = ({ 
+  children, 
+  fallback = null,
+  hydrationDelay = 0 
+}: ClientOnlyAdProps) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const mountTimeRef = useRef<number>(0);
 
+  // Track mounting and hydration
   useEffect(() => {
-    // Only set mounted to true after hydration is complete
+    mountTimeRef.current = Date.now();
     setIsMounted(true);
-  }, []);
+    
+    // Allow for any specified hydration delay
+    const hydrationTimer = setTimeout(() => {
+      setIsHydrated(true);
+    }, hydrationDelay);
 
-  // During SSR and initial hydration, render nothing to prevent mismatches
-  if (!isMounted) {
-    return null;
+    return () => clearTimeout(hydrationTimer);
+  }, [hydrationDelay]);
+
+  // During SSR, render fallback or nothing
+  if (typeof window === 'undefined') {
+    return <>{fallback}</>;
+  }
+
+  // During initial hydration, render fallback or nothing to prevent mismatches
+  if (!isMounted || !isHydrated) {
+    return <>{fallback}</>;
   }
 
   // After hydration, render the ad components
+  // Note: AdSense readiness is checked within individual ad components
   return <>{children}</>;
 };
 
