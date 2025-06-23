@@ -24,7 +24,7 @@ export default function MiddleAd() {
   }
 
   return (
-    <div className="w-full my-8" style={{ minHeight: 'fit-content', isolation: 'isolate' }}>
+    <div className="w-full my-8 max-w-full overflow-hidden" style={{ minHeight: 'fit-content', isolation: 'isolate' }}>
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
