@@ -372,22 +372,25 @@ article header,
   position: static !important;
 }
 
-/* Pure Google AdSense responsiveness with mobile viewport safety */
+/* Google AdSense Native Responsiveness - Let Google optimize completely */
 .adsbygoogle {
-  /* Let Google handle all sizing completely */
+  /* Core display properties for Google's responsive system */
   display: block !important;
   
-  /* Remove any custom constraints */
+  /* Remove all custom styling to let Google handle responsiveness */
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   
-  /* Mobile viewport safety - prevent overflow */
-  max-width: 100vw !important;
-  overflow: hidden !important;
+  /* Essential viewport safety without interfering with Google's sizing */
+  max-width: 100% !important;
+  width: 100% !important;
   
-  /* Ensure ads create proper layout flow */
+  /* Let Google's responsive system handle all sizing decisions */
+  height: auto !important;
+  
+  /* Maintain proper layout flow */
   contain: layout;
   isolation: isolate;
 }
@@ -408,19 +411,22 @@ body {
   overflow-x: hidden;
 }
 
-/* Ad container responsive behavior - let ads dictate space */
+/* Ad container responsive behavior - Google AdSense optimized */
 .w-full.my-6,
 .w-full.my-8 {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  /* Give ads breathing room */
+  /* Let Google's responsive ads determine their own space requirements */
   overflow: visible;
   position: relative;
   z-index: 1;
+  /* Provide flexible container for Google's responsive sizing */
+  min-width: 0;
+  flex-shrink: 0;
 }
 
-/* Mobile layout adaptation for ads */
+/* Mobile optimization for Google AdSense responsive ads */
 @media (max-width: 768px) {
   /* Ensure content doesn't overlap with responsive ads */
   .max-w-7xl {
@@ -437,25 +443,25 @@ body {
     overflow-x: hidden;
   }
   
-  /* Mobile ad containers - strict viewport boundaries */
+  /* Mobile ad containers - optimized for Google's responsive system */
   .w-full.my-6 {
     margin: 1.5rem auto;
-    padding: 0 0.5rem;
+    padding: 0 1rem;
     min-height: fit-content;
-    max-width: calc(100vw - 1rem);
-    overflow: hidden;
+    max-width: 100vw;
     box-sizing: border-box;
-    width: calc(100vw - 1rem) !important;
+    /* Let Google handle the exact width calculations */
+    width: 100%;
   }
   
   .w-full.my-8 {
     margin: 2rem auto;
-    padding: 0 0.5rem;
+    padding: 0 1rem;
     min-height: fit-content;
-    max-width: calc(100vw - 1rem);
-    overflow: hidden;
+    max-width: 100vw;
     box-sizing: border-box;
-    width: calc(100vw - 1rem) !important;
+    /* Let Google handle the exact width calculations */
+    width: 100%;
   }
   
   /* Prevent content from wrapping around ads */
@@ -471,42 +477,38 @@ body {
     max-width: 100%;
   }
   
-  /* Mobile AdSense safety constraints - stricter boundaries */
+  /* Let Google's responsive system handle mobile sizing completely */
   .adsbygoogle {
-    max-width: calc(100vw - 2rem) !important;
-    width: calc(100vw - 2rem) !important;
+    /* Only essential mobile viewport protection */
+    max-width: 100% !important;
+    width: 100% !important;
     margin: 0 auto !important;
     box-sizing: border-box !important;
-    overflow: hidden !important;
-  }
-  
-  /* Ensure inner ad content never exceeds container */
-  .adsbygoogle > * {
-    max-width: 100% !important;
-    overflow: hidden !important;
+    /* Let Google handle overflow and sizing */
   }
 }
 
-/* Ultra-mobile adaptation */
+/* Ultra-mobile optimization for Google AdSense */
 @media (max-width: 480px) {
-  /* Extra spacing on very small screens */
+  /* Minimal padding for maximum ad space on small screens */
   .w-full.my-6,
   .w-full.my-8 {
     margin: 1rem auto;
-    padding: 0 0.25rem;
-    max-width: calc(100vw - 0.5rem);
-    width: calc(100vw - 0.5rem) !important;
+    padding: 0 0.5rem;
+    max-width: 100vw;
+    width: 100%;
   }
   
   /* Ensure article content has proper margins around ads */
   .article-content {
-    padding: 0 0.25rem;
-    max-width: calc(100vw - 0.5rem);
+    padding: 0 0.5rem;
+    max-width: 100%;
   }
   
-  /* Ultra-mobile AdSense constraints */
+  /* Let Google's responsive system optimize for very small screens */
   .adsbygoogle {
-    max-width: calc(100vw - 1rem) !important;
-    width: calc(100vw - 1rem) !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    /* Google handles optimal sizing for small screens */
   }
 }

@@ -35,30 +35,22 @@ export default function HeaderAd() {
   return (
     <div 
       ref={adRef} 
-      className="w-full my-6 px-2 sm:px-6 lg:px-8" 
+      className="w-full my-6" 
       style={{ 
         minHeight: 'fit-content', 
-        isolation: 'isolate',
-        maxWidth: '100vw',
-        overflow: 'hidden',
-        boxSizing: 'border-box'
+        isolation: 'isolate'
       }}
     >
-      <div className="max-w-4xl mx-auto" style={{ maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
-        <ins
-          className="adsbygoogle"
-          style={{ 
-            display: 'block',
-            minHeight: '1px',
-            maxWidth: '100%',
-            overflow: 'hidden'
-          }}
-          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
-          data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
-      </div>
+      <ins
+        className="adsbygoogle"
+        style={{ 
+          display: 'block'
+        }}
+        data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
+        data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_HEADER_AD}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
     </div>
   );
 }
