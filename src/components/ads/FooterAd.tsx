@@ -24,7 +24,7 @@ export default function FooterAd() {
   }
 
   return (
-    <div className="w-full my-8 max-w-full overflow-hidden" style={{ minHeight: 'fit-content', isolation: 'isolate' }}>
+    <div className="w-full my-8" style={{ minHeight: 'fit-content', isolation: 'isolate', maxWidth: '100%', boxSizing: 'border-box' }}>
       <div className="border-t border-gray-200 pt-8 mt-8">
         <ins
           className="adsbygoogle"

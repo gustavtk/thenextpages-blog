@@ -54,7 +54,7 @@ export default function RootLayout({
         <AdSenseLoader />
         
         {/* Auto Ads optimization wrapper */}
-        <div data-ad-layout="in-article" data-ad-format="auto" data-full-width-responsive="true" className="max-w-full overflow-hidden">
+        <div data-ad-layout="in-article" data-ad-format="auto" data-full-width-responsive="true" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
           {children}
         </div>
       </body>
